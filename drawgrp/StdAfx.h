@@ -12,8 +12,8 @@
 
 
 // TODO: reference additional headers your program requires here
-#include "..\\grpapi\\grpapi_no-lib.h"
-#include "..\\storm.h"
+#include "../grpapi/grpapi_no-lib.h"
+#include "../LoadStorm/storm.h"
 #include <malloc.h>
 
 //{{AFX_INSERT_LOCATION}}
