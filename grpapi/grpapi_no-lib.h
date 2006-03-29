@@ -58,6 +58,33 @@ extern funcDestroyGrp DestroyGrp;
 extern funcDrawGrp DrawGrp;
 extern funcGetGrpInfo GetGrpInfo;
 
+typedef COLORREF (WINAPI* GETPIXELPROC)(
+  HDC hDC, // same value as hdcDest from DrawGrp,
+	       // does not need to be used as an HDC,
+	       // can be used for any other type of pointer
+  int X,   // x-coordinate of pixel
+  int Y    // y-coordinate of pixel
+);
+typedef void (WINAPI* SETPIXELPROC)(
+	HDC hDC,          // same value as hdcDest from DrawGrp,
+	                  // does not need to be used as an HDC,
+	                  // can be used for any other type of pointer
+	int X,            // x-coordinate of pixel
+	int Y,            // y-coordinate of pixel
+	COLORREF clrColor // new pixel color
+);
+
+// Call these to have DrawGrp use custom functions for reading and drawing pixels
+// so that you can have it read from and write to a buffer, for example.
+typedef void (WINAPI* funcSetFunctionGetPixel)(GETPIXELPROC lpGetPixelProc);
+typedef void (WINAPI* funcSetFunctionSetPixel)(SETPIXELPROC lpSetPixelProc);
+extern funcSetFunctionGetPixel SetFunctionGetPixel;
+extern funcSetFunctionSetPixel SetFunctionSetPixel;
+
+// Call this to make a different Storm.dll-compatible MPQ library be used (like SFMPQ).
+typedef BOOL (WINAPI* funcSetMpqDll)(LPCSTR lpDllFileName);
+extern funcSetMpqDll SetMpqDll;
+
 // These no longer need to be called
 typedef BOOL   (WINAPI* funcLoadGrpApi)();
 typedef void   (WINAPI* funcFreeGrpApi)();
