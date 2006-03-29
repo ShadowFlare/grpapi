@@ -1,0 +1,8 @@
+EXPORTS
+	LoadPalette   @1
+	LoadGrp       @2
+	DestroyGrp    @3
+	DrawGrp       @4
+	GetGrpInfo    @5
+	LoadGrpApi    @6
+	FreeGrpApi    @7
