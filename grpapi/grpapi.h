@@ -1,6 +1,6 @@
 /*
 
-  ShadowFlare GRP Library. (c) ShadowFlare Software 2002
+  ShadowFlare GRP Library. (c) ShadowFlare Software 2002-2006
 
   Any comments or suggestions are accepted at blakflare@hotmail.com (ShadowFlare)
 */
@@ -54,6 +54,30 @@ HANDLE GRPAPI WINAPI LoadGrp(LPCSTR lpFileName);
 BOOL   GRPAPI WINAPI DestroyGrp(HANDLE hGrp);
 BOOL   GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
 BOOL   GRPAPI WINAPI GetGrpInfo(HANDLE hGrp, GRPHEADER *GrpInfo);
+
+typedef COLORREF (WINAPI* GETPIXELPROC)(
+  HDC hDC, // same value as hdcDest from DrawGrp,
+	       // does not need to be used as an HDC,
+	       // can be used for any other type of pointer
+  int X,   // x-coordinate of pixel
+  int Y    // y-coordinate of pixel
+);
+typedef void (WINAPI* SETPIXELPROC)(
+	HDC hDC,          // same value as hdcDest from DrawGrp,
+	                  // does not need to be used as an HDC,
+	                  // can be used for any other type of pointer
+	int X,            // x-coordinate of pixel
+	int Y,            // y-coordinate of pixel
+	COLORREF clrColor // new pixel color
+);
+
+// Call these to have DrawGrp use custom functions for reading and drawing pixels
+// so that you can have it read from and write to a buffer, for example.
+void GRPAPI WINAPI SetFunctionGetPixel(GETPIXELPROC lpGetPixelProc);
+void GRPAPI WINAPI SetFunctionSetPixel(SETPIXELPROC lpSetPixelProc);
+
+// Call this to make a different Storm.dll-compatible MPQ library be used (like SFMPQ).
+BOOL GRPAPI WINAPI SetMpqDll(LPCSTR lpDllFileName);
 
 // These no longer need to be called
 BOOL   GRPAPI WINAPI LoadGrpApi();

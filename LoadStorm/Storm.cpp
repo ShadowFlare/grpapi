@@ -9,6 +9,8 @@ struct STORMMODULE {
 	~STORMMODULE();
 } Storm;
 
+void FreeStorm();
+
 HINSTANCE hStorm = 0;
 BOOL AlreadyLoaded = FALSE;
 
@@ -60,30 +62,12 @@ STORMMODULE::STORMMODULE()
 
 STORMMODULE::~STORMMODULE()
 {
-	SFileCloseArchive = 0;
-	SFileCloseFile = 0;
-	SFileDestroy = 0;
-	SFileGetFileArchive = 0;
-	SFileGetFileSize = 0;
-	SFileOpenArchive = 0;
-	SFileOpenFile = 0;
-	SFileOpenFileEx = 0;
-	SFileReadFile = 0;
-	SFileSetBasePath = 0;
-	SFileSetFilePointer = 0;
-	SFileSetLocale = 0;
-	SFileGetBasePath = 0;
-	SFileGetArchiveName = 0;
-	SFileGetFileName = 0;
-
-	if (hStorm==0) return;
-
-	if (AlreadyLoaded==FALSE) FreeLibrary(hStorm);
-	hStorm = 0;
+	FreeStorm();
 }
 
 HINSTANCE LoadStorm(char * DllFileName)
 {
+	FreeStorm();
 	if (hStorm!=0) return 0;
 	hStorm = GetModuleHandle(DllFileName);
 	if (hStorm == NULL) hStorm = LoadLibrary(DllFileName);
@@ -112,3 +96,26 @@ HINSTANCE LoadStorm(char * DllFileName)
 	return hStorm;
 }
 
+void FreeStorm()
+{
+	SFileCloseArchive = 0;
+	SFileCloseFile = 0;
+	SFileDestroy = 0;
+	SFileGetFileArchive = 0;
+	SFileGetFileSize = 0;
+	SFileOpenArchive = 0;
+	SFileOpenFile = 0;
+	SFileOpenFileEx = 0;
+	SFileReadFile = 0;
+	SFileSetBasePath = 0;
+	SFileSetFilePointer = 0;
+	SFileSetLocale = 0;
+	SFileGetBasePath = 0;
+	SFileGetArchiveName = 0;
+	SFileGetFileName = 0;
+
+	if (hStorm==0) return;
+
+	if (AlreadyLoaded==FALSE) FreeLibrary(hStorm);
+	hStorm = 0;
+}
