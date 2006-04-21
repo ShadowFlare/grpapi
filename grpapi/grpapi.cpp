@@ -187,124 +187,180 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 	GRPHEADER *GrpFile = (GRPHEADER *)hGrp;
 	nFrame %= GrpFile->nFrames;
 	FRAMEHEADER *GrpFrame = &((FRAMEHEADER *)(((char *)GrpFile)+6))[nFrame];
+	FRAMEHEADER *GrpFrames = &((FRAMEHEADER *)(((char *)GrpFile)+6))[0];
+	int FrameSize = 0xFFFFFF;
 	DWORD Right,Bottom;
 	if (dwFlags&HORIZONTAL_FLIP) Right = nXDest+GrpFile->wMaxWidth-1-GrpFrame->Left;
 	if (dwFlags&VERTICAL_FLIP) Bottom = nYDest+GrpFile->wMaxHeight-1-GrpFrame->Top;
 	nXDest += GrpFrame->Left;
 	nYDest += GrpFrame->Top;
 	WORD *GrpOffsets = ((WORD *)(((char *)GrpFile)+GrpFrame->Offset));
+	BYTE *GrpRaw = (BYTE *)GrpOffsets;
 	BYTE *RowData;
 	WORD x,ofs;
 	DWORD y;
 	WORD i;
+	int j;
+	if (nFrame + 1 < GrpFile->nFrames) {
+		for (i = 0; i + 1 < GrpFile->nFrames; i++) {
+			j = GrpFrames[i].Offset - GrpFrame->Offset;
+			if (j > 0 && j < FrameSize)
+				FrameSize = j;
+		}
+	}
+	if (FrameSize == 0xFFFFFF) {
+		for (i = 0; i + 1 < GrpFile->nFrames; i++) {
+			j = GrpFrames[i].Offset - GrpFrames[0].Offset;
+			if (j > 0 && j < FrameSize)
+				FrameSize = j;
+		}
+		if (FrameSize == GrpFrames[0].Width * GrpFrames[0].Height)
+			FrameSize = GrpFrame->Width * GrpFrame->Height;
+	}
 	if (!(dwFlags&HORIZONTAL_FLIP) && !(dwFlags&VERTICAL_FLIP)) {
-		for (y=0;y<GrpFrame->Height;y++) {
-			RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
-			x=0; ofs=0;
-			while (x<GrpFrame->Width) {
-				if (!(RowData[ofs] & 0x80)) {
-					if (!(RowData[ofs] & 0x40)) {
-						for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
-							x++;
+		if (FrameSize != GrpFrame->Width * GrpFrame->Height) {
+			for (y=0;y<GrpFrame->Height;y++) {
+				RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
+				x=0; ofs=0;
+				while (x<GrpFrame->Width) {
+					if (!(RowData[ofs] & 0x80)) {
+						if (!(RowData[ofs] & 0x40)) {
+							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=RowData[ofs]+1;
 						}
-						ofs+=RowData[ofs]+1;
+						else {
+							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=2;
+						}
 					}
 					else {
-						for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
-							x++;
-						}
-						ofs+=2;
+						x+=RowData[ofs]-128;
+						ofs++;
 					}
 				}
-				else {
-					x+=RowData[ofs]-128;
-					ofs++;
+			}
+		}
+		else {
+			for (y=0;y<GrpFrame->Height;y++) {
+				for (x=0;x<GrpFrame->Width;x++) {
+					SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
 				}
 			}
 		}
 	}
 	else if (dwFlags&HORIZONTAL_FLIP && !(dwFlags&VERTICAL_FLIP)) {
-		for (y=0;y<GrpFrame->Height;y++) {
-			RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
-			x=0; ofs=0;
-			while (x<GrpFrame->Width) {
-				if (!(RowData[ofs] & 0x80)) {
-					if (!(RowData[ofs] & 0x40)) {
-						for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,Right-x,nYDest+y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
-							x++;
+		if (FrameSize != GrpFrame->Width * GrpFrame->Height) {
+			for (y=0;y<GrpFrame->Height;y++) {
+				RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
+				x=0; ofs=0;
+				while (x<GrpFrame->Width) {
+					if (!(RowData[ofs] & 0x80)) {
+						if (!(RowData[ofs] & 0x40)) {
+							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,Right-x,nYDest+y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=RowData[ofs]+1;
 						}
-						ofs+=RowData[ofs]+1;
+						else {
+							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,Right-x,nYDest+y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=2;
+						}
 					}
 					else {
-						for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,Right-x,nYDest+y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
-							x++;
-						}
-						ofs+=2;
+						x+=RowData[ofs]-128;
+						ofs++;
 					}
 				}
-				else {
-					x+=RowData[ofs]-128;
-					ofs++;
+			}
+		}
+		else {
+			for (y=0;y<GrpFrame->Height;y++) {
+				for (x=0;x<GrpFrame->Width;x++) {
+					SetPix(hdcDest,Right-x,nYDest+y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
 				}
 			}
 		}
 	}
 	else if (!(dwFlags&HORIZONTAL_FLIP) && dwFlags&VERTICAL_FLIP) {
-		for (y=0;y<GrpFrame->Height;y++) {
-			RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
-			x=0; ofs=0;
-			while (x<GrpFrame->Width) {
-				if (!(RowData[ofs] & 0x80)) {
-					if (!(RowData[ofs] & 0x40)) {
-						for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
-							x++;
+		if (FrameSize != GrpFrame->Width * GrpFrame->Height) {
+			for (y=0;y<GrpFrame->Height;y++) {
+				RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
+				x=0; ofs=0;
+				while (x<GrpFrame->Width) {
+					if (!(RowData[ofs] & 0x80)) {
+						if (!(RowData[ofs] & 0x40)) {
+							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=RowData[ofs]+1;
 						}
-						ofs+=RowData[ofs]+1;
+						else {
+							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=2;
+						}
 					}
 					else {
-						for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
-							x++;
-						}
-						ofs+=2;
+						x+=RowData[ofs]-128;
+						ofs++;
 					}
 				}
-				else {
-					x+=RowData[ofs]-128;
-					ofs++;
+			}
+		}
+		else {
+			for (y=0;y<GrpFrame->Height;y++) {
+				for (x=0;x<GrpFrame->Width;x++) {
+					SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
 				}
 			}
 		}
 	}
 	else {
-		for (y=0;y<GrpFrame->Height;y++) {
-			RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
-			x=0; ofs=0;
-			while (x<GrpFrame->Width) {
-				if (!(RowData[ofs] & 0x80)) {
-					if (!(RowData[ofs] & 0x40)) {
-						for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,Right-x,Bottom-y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
-							x++;
+		if (FrameSize != GrpFrame->Width * GrpFrame->Height) {
+			for (y=0;y<GrpFrame->Height;y++) {
+				RowData = ((BYTE *)(((char *)GrpOffsets)+GrpOffsets[y]));
+				x=0; ofs=0;
+				while (x<GrpFrame->Width) {
+					if (!(RowData[ofs] & 0x80)) {
+						if (!(RowData[ofs] & 0x40)) {
+							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,Right-x,Bottom-y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=RowData[ofs]+1;
 						}
-						ofs+=RowData[ofs]+1;
+						else {
+							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
+								SetPix(hdcDest,Right-x,Bottom-y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								x++;
+							}
+							ofs+=2;
+						}
 					}
 					else {
-						for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-							SetPix(hdcDest,Right-x,Bottom-y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
-							x++;
-						}
-						ofs+=2;
+						x+=RowData[ofs]-128;
+						ofs++;
 					}
 				}
-				else {
-					x+=RowData[ofs]-128;
-					ofs++;
+			}
+		}
+		else {
+			for (y=0;y<GrpFrame->Height;y++) {
+				for (x=0;x<GrpFrame->Width;x++) {
+					SetPix(hdcDest,Right-x,Bottom-y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
 				}
 			}
 		}
