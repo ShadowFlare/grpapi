@@ -1,25 +1,19 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "drawgrp", "..\drawgrp\drawgrp.vcproj", "{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grpapi", "grpapi.vcproj", "{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grplib", "grplib.vcproj", "{66127C6F-39DA-4B7A-9856-789ED0139DCB}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
 		SccNumberOfProjects = 4
-		SccProjectName0 = \u0022$/grpapi.root/grpapi\u0022,\u0020FEAAAAAA
+		SccProjectName0 = \u0022$/grpapi_VS2005.root/grpapi\u0022,\u0020IGAAAAAA
 		SccLocalPath0 = ..
 		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
 		CanCheckoutShared = false
 		SccProjectFilePathRelativizedFromConnection0 = grpapi\\
-		SolutionUniqueID = {C7ACFA83-726F-4F2A-93F1-58F59B9D32B9}
 		SccProjectUniqueName1 = ..\\drawgrp\\drawgrp.vcproj
 		SccLocalPath1 = ..
 		CanCheckoutShared = false
@@ -33,26 +27,25 @@ Global
 		CanCheckoutShared = false
 		SccProjectFilePathRelativizedFromConnection3 = grpapi\\
 	EndGlobalSection
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Debug.ActiveCfg = Debug|Win32
-		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Debug.Build.0 = Debug|Win32
-		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Release.ActiveCfg = Release|Win32
-		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Release.Build.0 = Release|Win32
-		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Debug.ActiveCfg = Debug|Win32
-		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Debug.Build.0 = Debug|Win32
-		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Release.ActiveCfg = Release|Win32
-		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Release.Build.0 = Release|Win32
-		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Debug.ActiveCfg = Debug|Win32
-		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Debug.Build.0 = Debug|Win32
-		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Release.ActiveCfg = Release|Win32
-		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Release.Build.0 = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Debug|Win32.ActiveCfg = Debug|Win32
+		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Debug|Win32.Build.0 = Debug|Win32
+		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Release|Win32.ActiveCfg = Release|Win32
+		{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}.Release|Win32.Build.0 = Release|Win32
+		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Debug|Win32.Build.0 = Debug|Win32
+		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Release|Win32.ActiveCfg = Release|Win32
+		{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}.Release|Win32.Build.0 = Release|Win32
+		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Debug|Win32.Build.0 = Debug|Win32
+		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Release|Win32.ActiveCfg = Release|Win32
+		{66127C6F-39DA-4B7A-9856-789ED0139DCB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
