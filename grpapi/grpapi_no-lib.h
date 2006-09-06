@@ -86,7 +86,7 @@ typedef void (WINAPI* SETPIXELPROC)(
 // so that you can have it read from and write to a buffer, for example.
 typedef void (WINAPI* funcSetFunctionGetPixel)(GETPIXELPROC lpGetPixelProc);
 typedef void (WINAPI* funcSetFunctionSetPixel)(SETPIXELPROC lpSetPixelProc);
-extern funcSetFunctionGetPixel SetFunctionGetPixel;
+extern funcSetFunctionGetPixel SetFunctionGetPixel; // Only used with ALPHA_BLEND
 extern funcSetFunctionSetPixel SetFunctionSetPixel;
 
 // Call this to make a different Storm.dll-compatible MPQ library be used (like SFMPQ).

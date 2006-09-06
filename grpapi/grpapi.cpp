@@ -37,7 +37,7 @@ typedef struct {
 GETPIXELPROC MyGetPixel = GetPixel;
 SETPIXELPROC MySetPixel = (SETPIXELPROC)SetPixelV;
 
-void __inline SetPix(HDC hDC, int X, int Y, COLORREF clrColor, DWORD dwFlags, DWORD dwAlpha);
+void __inline SetPix(HDC hDC, int X, int Y, COLORREF clrColor, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
 
 extern HINSTANCE hStorm;
 
@@ -226,14 +226,14 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 					if (!(RowData[ofs] & 0x80)) {
 						if (!(RowData[ofs] & 0x40)) {
 							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								SetPix(hdcDest,nXDest+x,nYDest+y,RowData[ofs+i],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=RowData[ofs]+1;
 						}
 						else {
 							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								SetPix(hdcDest,nXDest+x,nYDest+y,RowData[ofs+1],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=2;
@@ -249,7 +249,7 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 		else {
 			for (y=0;y<GrpFrame->Height;y++) {
 				for (x=0;x<GrpFrame->Width;x++) {
-					SetPix(hdcDest,nXDest+x,nYDest+y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
+					SetPix(hdcDest,nXDest+x,nYDest+y,GrpRaw[y * GrpFrame->Width + x],dwPalette,dwFlags,dwAlpha);
 				}
 			}
 		}
@@ -263,14 +263,14 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 					if (!(RowData[ofs] & 0x80)) {
 						if (!(RowData[ofs] & 0x40)) {
 							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,Right-x,nYDest+y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								SetPix(hdcDest,Right-x,nYDest+y,RowData[ofs+i],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=RowData[ofs]+1;
 						}
 						else {
 							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,Right-x,nYDest+y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								SetPix(hdcDest,Right-x,nYDest+y,RowData[ofs+1],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=2;
@@ -286,7 +286,7 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 		else {
 			for (y=0;y<GrpFrame->Height;y++) {
 				for (x=0;x<GrpFrame->Width;x++) {
-					SetPix(hdcDest,Right-x,nYDest+y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
+					SetPix(hdcDest,Right-x,nYDest+y,GrpRaw[y * GrpFrame->Width + x],dwPalette,dwFlags,dwAlpha);
 				}
 			}
 		}
@@ -300,14 +300,14 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 					if (!(RowData[ofs] & 0x80)) {
 						if (!(RowData[ofs] & 0x40)) {
 							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								SetPix(hdcDest,nXDest+x,Bottom-y,RowData[ofs+i],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=RowData[ofs]+1;
 						}
 						else {
 							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								SetPix(hdcDest,nXDest+x,Bottom-y,RowData[ofs+1],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=2;
@@ -323,7 +323,7 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 		else {
 			for (y=0;y<GrpFrame->Height;y++) {
 				for (x=0;x<GrpFrame->Width;x++) {
-					SetPix(hdcDest,nXDest+x,Bottom-y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
+					SetPix(hdcDest,nXDest+x,Bottom-y,GrpRaw[y * GrpFrame->Width + x],dwPalette,dwFlags,dwAlpha);
 				}
 			}
 		}
@@ -337,14 +337,14 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 					if (!(RowData[ofs] & 0x80)) {
 						if (!(RowData[ofs] & 0x40)) {
 							for (i=1;i<=RowData[ofs] && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,Right-x,Bottom-y,dwPalette[RowData[ofs+i]],dwFlags,dwAlpha);
+								SetPix(hdcDest,Right-x,Bottom-y,RowData[ofs+i],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=RowData[ofs]+1;
 						}
 						else {
 							for (i=0;i<RowData[ofs]-64 && x<GrpFrame->Width;i++) {
-								SetPix(hdcDest,Right-x,Bottom-y,dwPalette[RowData[ofs+1]],dwFlags,dwAlpha);
+								SetPix(hdcDest,Right-x,Bottom-y,RowData[ofs+1],dwPalette,dwFlags,dwAlpha);
 								x++;
 							}
 							ofs+=2;
@@ -360,7 +360,7 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 		else {
 			for (y=0;y<GrpFrame->Height;y++) {
 				for (x=0;x<GrpFrame->Width;x++) {
-					SetPix(hdcDest,Right-x,Bottom-y,dwPalette[GrpRaw[y * GrpFrame->Width + x]],dwFlags,dwAlpha);
+					SetPix(hdcDest,Right-x,Bottom-y,GrpRaw[y * GrpFrame->Width + x],dwPalette,dwFlags,dwAlpha);
 				}
 			}
 		}
@@ -385,37 +385,42 @@ void GRPAPI WINAPI SetFunctionSetPixel(SETPIXELPROC lpSetPixelProc)
 	MySetPixel = lpSetPixelProc;
 }
 
-void __inline SetPix(HDC hDC, int X, int Y, COLORREF clrColor, DWORD dwFlags, DWORD dwAlpha)
+void __inline SetPix(HDC hDC, int X, int Y, COLORREF clrColor, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha)
 {
-	if (dwFlags&SHADOW_COLOR) {
-		clrColor = (dwFlags >> 8) & 0x00FFFFFF;
-	}
-	if (dwFlags&ALPHA_BLEND) {
-		DWORD dwColor = MyGetPixel(hDC,X,Y);
+	if (!(dwFlags&USE_INDEX)) {
+		if (dwFlags&SHADOW_COLOR) {
+			clrColor = (dwFlags >> 8) & 0x00FFFFFF;
+		}
+		else {
+			clrColor = dwPalette[clrColor];
+		}
+		if (dwFlags&ALPHA_BLEND) {
+			DWORD dwColor = MyGetPixel(hDC,X,Y);
 
-		// Old alpha
-		/*((BYTE *)&dwColor)[0]*=1-((float)((BYTE *)&dwAlpha)[0]/256);
-		((BYTE *)&dwColor)[1]*=1-((float)((BYTE *)&dwAlpha)[1]/256);
-		((BYTE *)&dwColor)[2]*=1-((float)((BYTE *)&dwAlpha)[2]/256);
-		((BYTE *)&clrColor)[0]*=(float)((BYTE *)&dwAlpha)[0]/256;
-		((BYTE *)&clrColor)[1]*=(float)((BYTE *)&dwAlpha)[1]/256;
-		((BYTE *)&clrColor)[2]*=(float)((BYTE *)&dwAlpha)[2]/256;
-		((BYTE *)&clrColor)[0]+=((BYTE *)&dwColor)[0];
-		((BYTE *)&clrColor)[1]+=((BYTE *)&dwColor)[1];
-		((BYTE *)&clrColor)[2]+=((BYTE *)&dwColor)[2];*/
+			// Old alpha
+			/*((BYTE *)&dwColor)[0]*=1-((float)((BYTE *)&dwAlpha)[0]/256);
+			((BYTE *)&dwColor)[1]*=1-((float)((BYTE *)&dwAlpha)[1]/256);
+			((BYTE *)&dwColor)[2]*=1-((float)((BYTE *)&dwAlpha)[2]/256);
+			((BYTE *)&clrColor)[0]*=(float)((BYTE *)&dwAlpha)[0]/256;
+			((BYTE *)&clrColor)[1]*=(float)((BYTE *)&dwAlpha)[1]/256;
+			((BYTE *)&clrColor)[2]*=(float)((BYTE *)&dwAlpha)[2]/256;
+			((BYTE *)&clrColor)[0]+=((BYTE *)&dwColor)[0];
+			((BYTE *)&clrColor)[1]+=((BYTE *)&dwColor)[1];
+			((BYTE *)&clrColor)[2]+=((BYTE *)&dwColor)[2];*/
 
-		/* blendedcolor =
-		     ( ( forecolor * ( 1 - alpha ) ) >> 8 )
-		   + ( ( backcolor * ( 256 - alpha ) ) >> 8 ) */
-		((BYTE *)&clrColor)[0] =
-			( ( ((BYTE *)&clrColor)[0] * ( ((BYTE *)&dwAlpha)[0] + 1 ) ) >> 8 )
-			+ ( ( ((BYTE *)&dwColor)[0] * ( 256 - ((BYTE *)&dwAlpha)[0] ) ) >> 8 );
-		((BYTE *)&clrColor)[1] =
-			( ( ((BYTE *)&clrColor)[1] * ( ((BYTE *)&dwAlpha)[1] + 1 ) ) >> 8 )
-			+ ( ( ((BYTE *)&dwColor)[1] * ( 256 - ((BYTE *)&dwAlpha)[1] ) ) >> 8 );
-		((BYTE *)&clrColor)[2] =
-			( ( ((BYTE *)&clrColor)[2] * ( ((BYTE *)&dwAlpha)[2] + 1 ) ) >> 8 )
-			+ ( ( ((BYTE *)&dwColor)[2] * ( 256 - ((BYTE *)&dwAlpha)[2] ) ) >> 8 );
+			/* blendedcolor =
+				 ( ( forecolor * ( 1 - alpha ) ) >> 8 )
+			   + ( ( backcolor * ( 256 - alpha ) ) >> 8 ) */
+			((BYTE *)&clrColor)[0] =
+				( ( ((BYTE *)&clrColor)[0] * ( ((BYTE *)&dwAlpha)[0] + 1 ) ) >> 8 )
+				+ ( ( ((BYTE *)&dwColor)[0] * ( 256 - ((BYTE *)&dwAlpha)[0] ) ) >> 8 );
+			((BYTE *)&clrColor)[1] =
+				( ( ((BYTE *)&clrColor)[1] * ( ((BYTE *)&dwAlpha)[1] + 1 ) ) >> 8 )
+				+ ( ( ((BYTE *)&dwColor)[1] * ( 256 - ((BYTE *)&dwAlpha)[1] ) ) >> 8 );
+			((BYTE *)&clrColor)[2] =
+				( ( ((BYTE *)&clrColor)[2] * ( ((BYTE *)&dwAlpha)[2] + 1 ) ) >> 8 )
+				+ ( ( ((BYTE *)&dwColor)[2] * ( 256 - ((BYTE *)&dwAlpha)[2] ) ) >> 8 );
+		}
 	}
 	MySetPixel(hDC,X,Y,clrColor);
 }

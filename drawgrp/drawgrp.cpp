@@ -82,11 +82,11 @@ int main(int argc, char* argv[])
 			BI.pBuffer[x] = 0xFFFFFFFF;
 		for (j=0;j<32;j++) {
 //			DrawGrp(hGrp,(HDC)&BI,i,0,i % (17*8),dwPalette,ALPHA_BLEND,0x401020);
-			DrawGrp(hGrp,(HDC)&BI,0,0,i % (17*8),dwPalette,0,0x401020);
+			DrawGrp(hGrp,(HDC)&BI,0,0,i % (17*8),dwPalette,USE_INDEX,0x401020);
 			for (x = 0; x < BI.nWidth; x++)
 				for (y = 0; y < BI.nHeight; y++) {
 					clrPixel = BI.pBuffer[(y * BI.nWidth) + x];
-					if (clrPixel != 0xFFFFFFFF) SetPixelV(hDC, i + x, i + y, clrPixel);
+					if (clrPixel != 0xFFFFFFFF) SetPixelV(hDC, i + x, i + y, dwPalette[clrPixel]);
 				}
 		}
 		FillRect(hDC, &rect, (HBRUSH) (COLOR_WINDOW+1));
@@ -99,11 +99,11 @@ int main(int argc, char* argv[])
 			BI.pBuffer[x] = 0xFFFFFFFF;
 		for (j=0;j<32;j++) {
 //			DrawGrp(hGrp,(HDC)&BI,400-i,0,i % (17*8),dwPalette,HORIZONTAL_FLIP|ALPHA_BLEND,0x401020);
-			DrawGrp(hGrp,(HDC)&BI,0,0,i % (17*8),dwPalette,HORIZONTAL_FLIP,0x401020);
+			DrawGrp(hGrp,(HDC)&BI,0,0,i % (17*8),dwPalette,HORIZONTAL_FLIP|USE_INDEX,0x401020);
 			for (x = 0; x < BI.nWidth; x++)
 				for (y = 0; y < BI.nHeight; y++) {
 					clrPixel = BI.pBuffer[(y * BI.nWidth) + x];
-					if (clrPixel != 0xFFFFFFFF) SetPixelV(hDC, 400-i + x, 400-i + y, clrPixel);
+					if (clrPixel != 0xFFFFFFFF) SetPixelV(hDC, 400-i + x, 400-i + y, dwPalette[clrPixel]);
 				}
 		}
 		FillRect(hDC, &rect, (HBRUSH) (COLOR_WINDOW+1));
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 	for (i = 0; i < BI.nWidth; i++)
 		for (j = 0; j < BI.nHeight; j++) {
 			clrPixel = BI.pBuffer[(j * BI.nWidth) + i];
-			if (clrPixel != 0xFFFFFFFF) SetPixelV(hDC, 400 + i, 300 + j, clrPixel);
+			if (clrPixel != 0xFFFFFFFF) SetPixelV(hDC, 400 + i, 300 + j, dwPalette[clrPixel]);
 		}
 	//}
 	ReleaseDC(0,hDC);

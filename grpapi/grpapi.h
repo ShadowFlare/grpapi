@@ -81,7 +81,7 @@ typedef void (WINAPI* SETPIXELPROC)(
 
 // Call these to have DrawGrp use custom functions for reading and drawing pixels
 // so that you can have it read from and write to a buffer, for example.
-void GRPAPI WINAPI SetFunctionGetPixel(GETPIXELPROC lpGetPixelProc);
+void GRPAPI WINAPI SetFunctionGetPixel(GETPIXELPROC lpGetPixelProc); // Only used with ALPHA_BLEND
 void GRPAPI WINAPI SetFunctionSetPixel(SETPIXELPROC lpSetPixelProc);
 
 // Call this to make a different Storm.dll-compatible MPQ library be used (like SFMPQ).
