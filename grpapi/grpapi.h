@@ -39,12 +39,20 @@ typedef struct {
                                    // the shadow's color, third byte is green,
                                    // fourth byte is blue; like this:
                                    // SHADOW_COLOR|0xBBGGRR00
+                                   // This can be accomplished by using the left shift
+                                   // operator like this:  SHADOW_COLOR|(color << 8)
 #define ALPHA_BLEND     0x00000008 // Blends the graphic with what it is being drawn over.
                                    // The dwAlpha parameter will only be used when this
                                    // flag is specified.  dwAlpha is an RGB value
                                    // (0xBBGGRR).
                                    // Note: Because of the extra calculations required,
                                    // alpha blended graphics take longer to draw
+#define USE_INDEX       0x00000010 // Only valid when used with a custom SetPixel function.
+                                   // This flag cannot be used in combination with
+                                   // ALPHA_BLEND or SHADOW_COLOR
+                                   // When this flag is used, the index to a color in the
+                                   // palette will be passed to your custom SetPixel
+                                   // function instead of the actual color.
 
 // Palette is an array of 256 DWORD's
 // For LoadPalette and LoadGrp, lpFileName may be a file in an open mpq archive
