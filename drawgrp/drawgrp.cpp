@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 	if (argc>1)
 		hGrp = LoadGrp(argv[1]);
 	else
-		hGrp = LoadGrp("game\\icons.grp");
+		hGrp = LoadGrp("unit\\zerg\\ultra.grp");
 	HDC hDC = GetDC(0);
 	GRPHEADER GrpInfo;
 	if (GetGrpInfo(hGrp,&GrpInfo)==0) {GrpInfo.nFrames=0;GrpInfo.wMaxWidth=0;GrpInfo.wMaxHeight=0;}
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 	}*/
 	COLORREF clrPixel;
 	RECT rect;
-	for (i=0;i<400;i+=1) {
+	for (i=13;i<400;i+=17) {
 		rect.left = rect.top = i;
 		rect.right = rect.left + BI.nWidth;
 		rect.bottom = rect.top + BI.nHeight;
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 		}
 		FillRect(hDC, &rect, (HBRUSH) (COLOR_WINDOW+1));
 	}
-	for (i=0;i<400;i+=1) {
+	for (i=4;i<400;i+=17) {
 		rect.left = rect.top = 400-i;
 		rect.right = rect.left + BI.nWidth;
 		rect.bottom = rect.top + BI.nHeight;
