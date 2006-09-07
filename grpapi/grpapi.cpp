@@ -147,7 +147,7 @@ HANDLE GRPAPI WINAPI LoadGrp(LPCSTR lpFileName)
 			SFileCloseFile(hFile);
 			return (HANDLE)-1;
 		}
-		GrpFile = (char *)VirtualAlloc(0,fsz,MEM_COMMIT,PAGE_READWRITE);
+		GrpFile = (char *)malloc(fsz);
 		if (GrpFile) {
 			SFileSetFilePointer(hFile,0,0,FILE_BEGIN);
 			SFileReadFile(hFile,GrpFile,fsz,0,0);
@@ -163,7 +163,7 @@ HANDLE GRPAPI WINAPI LoadGrp(LPCSTR lpFileName)
 			CloseHandle(hFile);
 			return (HANDLE)-1;
 		}
-		GrpFile = (char *)VirtualAlloc(0,fsz,MEM_COMMIT,PAGE_READWRITE);
+		GrpFile = (char *)malloc(fsz);
 		if (GrpFile) {
 			SetFilePointer(hFile,0,0,FILE_BEGIN);
 			ReadFile(hFile,GrpFile,fsz,&tsz,0);
@@ -177,7 +177,7 @@ HANDLE GRPAPI WINAPI LoadGrp(LPCSTR lpFileName)
 BOOL GRPAPI WINAPI DestroyGrp(HANDLE hGrp)
 {
 	if (!hGrp || hGrp==INVALID_HANDLE_VALUE) return FALSE;
-	VirtualFree(hGrp,0,MEM_RELEASE);
+	free(hGrp);
 	return TRUE;
 }
 
@@ -377,12 +377,18 @@ BOOL GRPAPI WINAPI GetGrpInfo(HANDLE hGrp, GRPHEADER *GrpInfo)
 
 void GRPAPI WINAPI SetFunctionGetPixel(GETPIXELPROC lpGetPixelProc)
 {
-	MyGetPixel = lpGetPixelProc;
+	if (!lpGetPixelProc)
+		MyGetPixel = GetPixel;
+	else
+		MyGetPixel = lpGetPixelProc;
 }
 
 void GRPAPI WINAPI SetFunctionSetPixel(SETPIXELPROC lpSetPixelProc)
 {
-	MySetPixel = lpSetPixelProc;
+	if (!lpSetPixelProc)
+		MySetPixel = (SETPIXELPROC)SetPixelV;
+	else
+		MySetPixel = lpSetPixelProc;
 }
 
 void __inline SetPix(HDC hDC, int X, int Y, COLORREF clrColor, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha)
