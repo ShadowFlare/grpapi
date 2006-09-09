@@ -96,6 +96,11 @@ int main(int argc, char* argv[])
 	SetFunctionSetPixel((SETPIXELPROC)WritePixelToBuffer);
 	for (i=0;i<GrpInfo.nFrames;i++) {
 		BI.nFrame = i;
+		for (y = 0; y < BI.nHeight; y++) {
+			for (x = 0; x < BI.nWidth; x++) {
+				WritePixelToBuffer(&BI, x, y, 45);
+			}
+		}
 		DrawGrp(hGrp,(HDC)&BI,0,0,i,0,USE_INDEX,0);
 	}
 	hGrp2 = hGrp;

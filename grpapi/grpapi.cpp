@@ -567,7 +567,7 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 					}
 
 					// Count repeating pixels, nRepeat = number of pixels - 1, ignore if there are less than 4 duplicates
-					for (nRepeat = 0; lpImageData[i+x+nRepeat] == lpImageData[i+x+nRepeat+1] && x+nRepeat < lpFrameHeader->Left + lpFrameHeader->Width - 1 && nRepeat < 0x3F; nRepeat++) {}
+					for (nRepeat = 0; lpImageData[i+x+nRepeat] == lpImageData[i+x+nRepeat+1] && x+nRepeat < lpFrameHeader->Left + lpFrameHeader->Width - 1 && nRepeat < 0x3E; nRepeat++) {}
 
 					if (nRepeat > 2) {
 						lpRowBuf[nBufPos] = 0x41 + nRepeat;
