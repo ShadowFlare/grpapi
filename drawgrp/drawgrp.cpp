@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 		BI.nFrame = i;
 		for (y = 0; y < BI.nHeight; y++) {
 			for (x = 0; x < BI.nWidth; x++) {
-				WritePixelToBuffer(&BI, x, y, 45);
+				WritePixelToBuffer(&BI, x, y, 8);
 			}
 		}
 		DrawGrp(hGrp,(HDC)&BI,0,0,i,0,USE_INDEX,0);
