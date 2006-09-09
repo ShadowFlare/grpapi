@@ -66,6 +66,9 @@ extern funcDestroyGrp DestroyGrp;
 extern funcDrawGrp DrawGrp;
 extern funcGetGrpInfo GetGrpInfo;
 
+typedef HANDLE (WINAPI* funcCreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, DWORD *nGrpSize);
+extern funcCreateGrp CreateGrp;
+
 typedef COLORREF (WINAPI* GETPIXELPROC)(
   HDC hDC, // same value as hdcDest from DrawGrp,
 	       // does not need to be used as an HDC,

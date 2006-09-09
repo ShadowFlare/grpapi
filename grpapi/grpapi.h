@@ -63,6 +63,8 @@ BOOL   GRPAPI WINAPI DestroyGrp(HANDLE hGrp);
 BOOL   GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
 BOOL   GRPAPI WINAPI GetGrpInfo(HANDLE hGrp, GRPHEADER *GrpInfo);
 
+HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, DWORD *nGrpSize);
+
 typedef COLORREF (WINAPI* GETPIXELPROC)(
   HDC hDC, // same value as hdcDest from DrawGrp,
 	       // does not need to be used as an HDC,

@@ -9,3 +9,4 @@ EXPORTS
 	SetFunctionGetPixel @8
 	SetFunctionSetPixel @9
 	SetMpqDll           @10
+	CreateGrp           @11
