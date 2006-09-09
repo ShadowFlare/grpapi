@@ -3,6 +3,7 @@
 
 #define _CRT_RAND_S
 #include <stdlib.h>
+#include <stdio.h>
 #include "stdafx.h"
 
 
@@ -99,28 +100,35 @@ int main(int argc, char* argv[])
 	}
 	hGrp2 = hGrp;
 	hGrp = CreateGrp(BI.pBuffer, GrpInfo.nFrames, GrpInfo.wMaxWidth, GrpInfo.wMaxHeight, &nGrpSize);
+	/*HANDLE hFile;
+	hFile = CreateFile("generated ultralisk.grp", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
+	if (hFile != INVALID_HANDLE_VALUE) {
+		WriteFile(hFile, hGrp, nGrpSize, &j, 0);
+		CloseHandle(hFile);
+	}*/
 	BI.nFrame = 0xFFFF;
-	for (i=13;i<14;i+=17) {
-		rect.left = rect.top = i;
+	j=0;
+	for (i=0;i<GrpInfo.nFrames;i+=1) {
+		rect.left = rect.top = 0;
 		rect.right = rect.left + BI.nWidth;
 		rect.bottom = rect.top + BI.nHeight;
 		for (x = 0; x < BI.nWidth * BI.nHeight; x++)
 			BI.pBuffer[x] = -1;
-		for (j=0;j<(32 * 25);j++) {
+		//for (j=0;j<(1 * 1);j++) {
 //			DrawGrp(hGrp,(HDC)&BI,i,0,i % (17*8),dwPalette,ALPHA_BLEND,0x401020);
-			DrawGrp(hGrp2,(HDC)&BI,0,0,i % (17*8),0,USE_INDEX,0x401020);
-			u = memcmp(BI.pBuffer, &BI.pBuffer[(i % (17*8)) * BI.nWidth * BI.nHeight], BI.nWidth * BI.nHeight * sizeof(short));
-			DrawGrp(hGrp,(HDC)&BI,0,0,i % (17*8),0,USE_INDEX,0x401020);
-			u = memcmp(BI.pBuffer, &BI.pBuffer[(i % (17*8)) * BI.nWidth * BI.nHeight], BI.nWidth * BI.nHeight * sizeof(short));
+			//DrawGrp(hGrp2,(HDC)&BI,0,0,i,0,USE_INDEX,0x401020);
+			//u = memcmp(BI.pBuffer, &BI.pBuffer[i * BI.nWidth * BI.nHeight], BI.nWidth * BI.nHeight * sizeof(short));
+			DrawGrp(hGrp,(HDC)&BI,0,0,i,0,USE_INDEX,0x401020);
+			u = memcmp(BI.pBuffer, &BI.pBuffer[i * BI.nWidth * BI.nHeight], BI.nWidth * BI.nHeight * sizeof(short));
 			for (x = 0; x < BI.nWidth; x++)
 				for (y = 0; y < BI.nHeight; y++) {
 					clrPixel = BI.pBuffer[(y * BI.nWidth) + x];
-					if (clrPixel != -1) SetPixelV(hDC, i + x, i + y, dwPalette[clrPixel]);
+					if (clrPixel != -1) SetPixelV(hDC, x, y, dwPalette[clrPixel]);
 				}
-		}
+		//}
 		if (u) {
-			MessageBox(0, "Output of re-encoded graphic does not match original!", 0, 0);
-			break;
+			printf("Output of re-encoded graphic for frame %d does not match original!  Total %d\n", i, ++j);
+			//break;
 		}
 		FillRect(hDC, &rect, (HBRUSH) (COLOR_WINDOW+1));
 	}
