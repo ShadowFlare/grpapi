@@ -439,7 +439,7 @@ void __inline SetPix(HDC hDC, int X, int Y, COLORREF clrColor, DWORD *dwPalette,
 	MySetPixel(hDC,X,Y,clrColor);
 }
 
-HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, DWORD *nGrpSize)
+HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, BOOL bNoCompress, DWORD *nGrpSize)
 {
 	GRPHEADER GrpHeader;
 	FRAMEHEADER *lpFrameHeaders;
@@ -496,15 +496,20 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 		lpFrameHeaders[i].Width = x2 - x1 + 1;
 		lpFrameHeaders[i].Height = y2 - y1 + 1;
 
-		EncodeFrameData(lpImageData, i, &GrpHeader, &lpFrameHeaders[i], &lpFrameData[i]);
+		if (!bNoCompress) {
+			EncodeFrameData(lpImageData, i, &GrpHeader, &lpFrameHeaders[i], &lpFrameData[i]);
 
-		y = lpFrameHeaders[i].Height;
-		if (y > 0) {
-			y--;
-			nLastOffset = lpFrameHeaders[i].Offset + lpFrameData[i].lpRowOffsets[y] + lpFrameData[i].lpRowSizes[y];
+			y = lpFrameHeaders[i].Height;
+			if (y > 0) {
+				y--;
+				nLastOffset = lpFrameHeaders[i].Offset + lpFrameData[i].lpRowOffsets[y] + lpFrameData[i].lpRowSizes[y];
+			}
+			else {
+				nLastOffset = lpFrameHeaders[i].Offset;
+			}
 		}
 		else {
-			nLastOffset = lpFrameHeaders[i].Offset;
+			nLastOffset = lpFrameHeaders[i].Offset + lpFrameHeaders[i].Width * lpFrameHeaders[i].Height;
 		}
 	}
 
@@ -516,18 +521,28 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 
 	for (i = 0; i < nFrames; i++) {
 		if (lpFrameData[i].lpRowOffsets) {
-			memcpy(lpGrpData + lpFrameHeaders[i].Offset, lpFrameData[i].lpRowOffsets, lpFrameHeaders[i].Height * sizeof(WORD));
+			if (!bNoCompress) {
+				memcpy(lpGrpData + lpFrameHeaders[i].Offset, lpFrameData[i].lpRowOffsets, lpFrameHeaders[i].Height * sizeof(WORD));
 
-			for (y = 0; y < lpFrameHeaders[i].Height; y++) {
-				if (lpFrameData[i].lpRowData[y]) {
-					memcpy(lpGrpData + lpFrameHeaders[i].Offset + lpFrameData[i].lpRowOffsets[y], lpFrameData[i].lpRowData[y], lpFrameData[i].lpRowSizes[y]);
-					free(lpFrameData[i].lpRowData[y]);
+				for (y = 0; y < lpFrameHeaders[i].Height; y++) {
+					if (lpFrameData[i].lpRowData[y]) {
+						memcpy(lpGrpData + lpFrameHeaders[i].Offset + lpFrameData[i].lpRowOffsets[y], lpFrameData[i].lpRowData[y], lpFrameData[i].lpRowSizes[y]);
+						free(lpFrameData[i].lpRowData[y]);
+					}
+				}
+
+				free(lpFrameData[i].lpRowOffsets);
+				free(lpFrameData[i].lpRowSizes);
+				free(lpFrameData[i].lpRowData);
+			}
+			else {
+				for (y = 0; y < lpFrameHeaders[i].Height; y++) {
+					for (x = 0; x < lpFrameHeaders[i].Width; x++) {
+						lpGrpData[lpFrameHeaders[i].Offset + y * lpFrameHeaders[i].Width + x] =
+							lpImageData[i * wMaxWidth * wMaxHeight + (lpFrameHeaders[i].Top + y) * wMaxWidth + lpFrameHeaders[i].Left + x];
+					}
 				}
 			}
-
-			free(lpFrameData[i].lpRowOffsets);
-			free(lpFrameData[i].lpRowSizes);
-			free(lpFrameData[i].lpRowData);
 		}
 	}
 
@@ -553,7 +568,7 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 		i = nFrame * lpGrpHeader->wMaxWidth * lpGrpHeader->wMaxHeight + (lpFrameHeader->Top + y) * lpGrpHeader->wMaxWidth;
 
 		/* Fails verification when using this.  Bug in encoder or decoder?  Doesn't provide much benefit.
-		// Search for duplicate rows
+		// Search for duplicate rows (experimental)
 		for (x = 0; x < y; x++) {
 			j = nFrame * lpGrpHeader->wMaxWidth * lpGrpHeader->wMaxHeight + (lpFrameHeader->Top + x) * lpGrpHeader->wMaxWidth;
 			if (memcmp(&lpImageData[i+lpFrameHeader->Left],

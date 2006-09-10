@@ -66,7 +66,7 @@ extern funcDestroyGrp DestroyGrp;
 extern funcDrawGrp DrawGrp;
 extern funcGetGrpInfo GetGrpInfo;
 
-typedef HANDLE (WINAPI* funcCreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, DWORD *nGrpSize);
+typedef HANDLE (WINAPI* funcCreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, BOOL bNoCompress, DWORD *nGrpSize);
 extern funcCreateGrp CreateGrp;
 
 typedef COLORREF (WINAPI* GETPIXELPROC)(
