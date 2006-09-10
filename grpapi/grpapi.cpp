@@ -467,6 +467,7 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 
 		if (j < i) {
 			memcpy(&lpFrameHeaders[i], &lpFrameHeaders[j], sizeof(FRAMEHEADER));
+			lpFrameData[i].lpRowOffsets = 0;
 			continue;
 		}
 
@@ -514,22 +515,19 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 	memcpy(lpGrpData + sizeof(GRPHEADER), lpFrameHeaders, nFrames * sizeof(FRAMEHEADER));
 
 	for (i = 0; i < nFrames; i++) {
-		if (lpFrameHeaders[i].Offset) {
+		if (lpFrameData[i].lpRowOffsets) {
 			memcpy(lpGrpData + lpFrameHeaders[i].Offset, lpFrameData[i].lpRowOffsets, lpFrameHeaders[i].Height * sizeof(WORD));
 
 			for (y = 0; y < lpFrameHeaders[i].Height; y++) {
-				memcpy(lpGrpData + lpFrameHeaders[i].Offset + lpFrameData[i].lpRowOffsets[y], lpFrameData[i].lpRowData[y], lpFrameData[i].lpRowSizes[y]);
-				free(lpFrameData[i].lpRowData[y]);
+				if (lpFrameData[i].lpRowData[y]) {
+					memcpy(lpGrpData + lpFrameHeaders[i].Offset + lpFrameData[i].lpRowOffsets[y], lpFrameData[i].lpRowData[y], lpFrameData[i].lpRowSizes[y]);
+					free(lpFrameData[i].lpRowData[y]);
+				}
 			}
 
 			free(lpFrameData[i].lpRowOffsets);
 			free(lpFrameData[i].lpRowSizes);
 			free(lpFrameData[i].lpRowData);
-
-			for (j = i + 1; j < nFrames; j++) {
-				if (lpFrameHeaders[i].Offset == lpFrameHeaders[j].Offset)
-					lpFrameHeaders[j].Offset = 0;
-			}
 		}
 	}
 
@@ -542,8 +540,9 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 
 void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHeader, FRAMEHEADER *lpFrameHeader, FRAMEDATA *lpFrameData)
 {
-	int x, y, i, nBufPos, nRepeat;
+	int x, y, i, j, nBufPos, nRepeat;
 	LPBYTE lpRowBuf;
+	WORD nLastOffset;
 
 	lpFrameData->lpRowOffsets = (WORD *)malloc(lpFrameHeader->Height * sizeof(WORD));
 	lpFrameData->lpRowSizes = (WORD *)malloc(lpFrameHeader->Height * sizeof(WORD));
@@ -552,6 +551,32 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 
 	for (y = 0; y < lpFrameHeader->Height; y++) {
 		i = nFrame * lpGrpHeader->wMaxWidth * lpGrpHeader->wMaxHeight + (lpFrameHeader->Top + y) * lpGrpHeader->wMaxWidth;
+
+		/* Fails verification when using this.  Bug in encoder or decoder?  Doesn't provide much benefit.
+		// Search for duplicate rows
+		for (x = 0; x < y; x++) {
+			j = nFrame * lpGrpHeader->wMaxWidth * lpGrpHeader->wMaxHeight + (lpFrameHeader->Top + x) * lpGrpHeader->wMaxWidth;
+			if (memcmp(&lpImageData[i+lpFrameHeader->Left],
+			           &lpImageData[j+lpFrameHeader->Left],
+			           lpGrpHeader->wMaxWidth * sizeof(short)) == 0)
+				break;
+		}
+
+		if (x < y) {
+			lpFrameData->lpRowOffsets[y] = lpFrameData->lpRowOffsets[x];
+			lpFrameData->lpRowSizes[y] = 0;
+			lpFrameData->lpRowData[y] = 0;
+
+#ifdef _DEBUG
+			if (!VerifyRow(&lpImageData[i+lpFrameHeader->Left], lpFrameHeader->Width, lpFrameData->lpRowData[x], lpFrameData->lpRowSizes[x])) {
+				nBufPos = nBufPos;
+			}
+#endif
+
+			continue;
+		}
+		*/
+
 		nBufPos = 0;
 		if (lpFrameHeader->Width > 0) {
 			for (x = lpFrameHeader->Left; x < lpFrameHeader->Left + lpFrameHeader->Width; x++) {
@@ -617,8 +642,10 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 			lpFrameData->lpRowOffsets[y] = lpFrameHeader->Height * sizeof(WORD);
 		}
 		else {
-			lpFrameData->lpRowOffsets[y] = lpFrameData->lpRowOffsets[y-1] + lpFrameData->lpRowSizes[y-1];
+			lpFrameData->lpRowOffsets[y] = nLastOffset;
 		}
+
+		nLastOffset = lpFrameData->lpRowOffsets[y] + nBufPos;
 
 		lpFrameData->lpRowSizes[y] = nBufPos;
 		lpFrameData->lpRowData[y] = (LPBYTE)malloc(nBufPos);
