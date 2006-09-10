@@ -539,7 +539,7 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 				for (y = 0; y < lpFrameHeaders[i].Height; y++) {
 					for (x = 0; x < lpFrameHeaders[i].Width; x++) {
 						lpGrpData[lpFrameHeaders[i].Offset + y * lpFrameHeaders[i].Width + x] =
-							lpImageData[i * wMaxWidth * wMaxHeight + (lpFrameHeaders[i].Top + y) * wMaxWidth + lpFrameHeaders[i].Left + x];
+							(BYTE)lpImageData[i * wMaxWidth * wMaxHeight + (lpFrameHeaders[i].Top + y) * wMaxWidth + lpFrameHeaders[i].Left + x];
 					}
 				}
 			}
@@ -555,7 +555,7 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 
 void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHeader, FRAMEHEADER *lpFrameHeader, FRAMEDATA *lpFrameData)
 {
-	int x, y, i, j, nBufPos, nRepeat;
+	int x, y, i, nBufPos, nRepeat;
 	LPBYTE lpRowBuf;
 	WORD nLastOffset;
 
