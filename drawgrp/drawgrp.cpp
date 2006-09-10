@@ -40,7 +40,10 @@ void WINAPI WritePixelToBuffer(BufferInfo *pBI, int X, int Y, COLORREF clrColor)
 	if (pBI->nFrame == 0xFFFF)
 		pBI->pBuffer[(Y * pBI->nWidth) + X] = (signed short)clrColor;
 	else
-		pBI->pBuffer[(pBI->nFrame * pBI->nWidth * pBI->nHeight) + (Y * pBI->nWidth) + X] = (signed short)clrColor;
+		//if (clrColor < 1 || clrColor > 13)
+		//	pBI->pBuffer[(pBI->nFrame * pBI->nWidth * pBI->nHeight) + (Y * pBI->nWidth) + X] = (signed short)((BYTE)-clrColor);
+		//else
+			pBI->pBuffer[(pBI->nFrame * pBI->nWidth * pBI->nHeight) + (Y * pBI->nWidth) + X] = (signed short)clrColor;
 }
 
 int main(int argc, char* argv[])
@@ -98,13 +101,13 @@ int main(int argc, char* argv[])
 		BI.nFrame = i;
 		for (y = 0; y < BI.nHeight; y++) {
 			for (x = 0; x < BI.nWidth; x++) {
-				WritePixelToBuffer(&BI, x, y, 8);
+				WritePixelToBuffer(&BI, x, y, -1);
 			}
 		}
 		DrawGrp(hGrp,(HDC)&BI,0,0,i,0,USE_INDEX,0);
 	}
 	hGrp2 = hGrp;
-	hGrp = CreateGrp(BI.pBuffer, GrpInfo.nFrames, GrpInfo.wMaxWidth, GrpInfo.wMaxHeight, &nGrpSize);
+	hGrp = CreateGrp(BI.pBuffer, GrpInfo.nFrames, GrpInfo.wMaxWidth, GrpInfo.wMaxHeight, FALSE, &nGrpSize);
 	/*HANDLE hFile;
 	hFile = CreateFile("generated ultralisk.grp", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
 	if (hFile != INVALID_HANDLE_VALUE) {
