@@ -66,6 +66,21 @@ extern funcDestroyGrp DestroyGrp;
 extern funcDrawGrp DrawGrp;
 extern funcGetGrpInfo GetGrpInfo;
 
+// A pointer to the raw image data to encode should be passed to lpImageData.  The size of
+// the buffer containing the data should be nFrames * wMaxWidth * wMaxHeight * sizeof(short)
+// and the values should be arranged row by row of the frame, with the top row first.
+// After all the rows of a frame have been put into the buffer, the rows of the next frame
+// go after it.  For transparent pixels, they should be set to -1.  All other pixels should
+// have the high order byte set to zero, meaning that they should not be negative and the
+// values should not exceed 255 (0xFF).  The values used for the colors are indexes into the
+// color palette.
+// Pass TRUE to bNoCompress if you need an uncompressed GRP.
+// Pass a pointer to a DWORD value to nGrpSize to receive the size in bytes of the resulting encoded GRP.
+// The return value of this function is actually a pointer to the GRP data.  This is what your
+// program should save to a file.  The size of this buffer is the value received by nGrpSize.
+// When your program is done with the returned buffer, it should call DestroyGrp on the
+// buffer that was returned by this function to free up the memory from it.
+// The pointer returned by this function can also be directly used by DrawGrp or GetGrpInfo.
 typedef HANDLE (WINAPI* funcCreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, BOOL bNoCompress, DWORD *nGrpSize);
 extern funcCreateGrp CreateGrp;
 
@@ -107,4 +122,3 @@ extern funcFreeGrpApi FreeGrpApi;
 #endif
 
 #endif
-
