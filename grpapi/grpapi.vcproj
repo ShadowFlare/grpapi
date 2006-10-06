@@ -32,7 +32,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\drawgrp\debug\&quot;"
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\drawgrp\debug\&quot;&#x0D;&#x0A;"
 				Outputs="$(TargetDir)null.txt"
 			/>
 			<Tool
@@ -127,7 +127,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\drawgrp\release\&quot;"
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\drawgrp\release\&quot;&#x0D;&#x0A;"
 				Outputs="$(TargetDir)null.txt"
 			/>
 			<Tool
@@ -277,6 +277,10 @@
 			>
 			<File
 				RelativePath="grpapi.h"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
