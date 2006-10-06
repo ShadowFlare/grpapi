@@ -491,10 +491,16 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 				}
 			}
 		}
+		x2 = x2 - x1 + 1;
+		y2 = y2 - y1 + 1;
+		if ((WORD)x1 > 255) x1 = 255;
+		if ((WORD)y1 > 255) y1 = 255;
+		if ((WORD)x2 > 255) x2 = 255;
+		if ((WORD)y2 > 255) y2 = 255;
 		lpFrameHeaders[i].Left = x1;
 		lpFrameHeaders[i].Top = y1;
-		lpFrameHeaders[i].Width = x2 - x1 + 1;
-		lpFrameHeaders[i].Height = y2 - y1 + 1;
+		lpFrameHeaders[i].Width = x2;
+		lpFrameHeaders[i].Height = y2;
 
 		if (!bNoCompress) {
 			EncodeFrameData(lpImageData, i, &GrpHeader, &lpFrameHeaders[i], &lpFrameData[i]);

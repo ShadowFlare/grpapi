@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="grpapi"
 	ProjectGUID="{08812E9C-7F03-4DCB-8828-F3BDB0728EC7}"
+	RootNamespace="grpapi"
 	SccProjectName="&quot;$/grpapi_VS2005.root/grpapi&quot;, IGAAAAAA"
 	SccLocalPath=".."
 	SccProvider="MSSCCI:Microsoft Visual SourceSafe"
@@ -31,6 +32,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\drawgrp\debug\&quot;"
+				Outputs="$(TargetDir)null.txt"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -124,6 +127,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\drawgrp\release\&quot;"
+				Outputs="$(TargetDir)null.txt"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
