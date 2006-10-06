@@ -79,6 +79,23 @@ void GRPAPI WINAPI FreeGrpApi()
 {
 }
 
+/*
+HANDLE hProcessHeap = NULL;
+
+void * SFAlloc(size_t nSize)
+{
+	if (!hProcessHeap) hProcessHeap = GetProcessHeap();
+	if (hProcessHeap) return HeapAlloc(hProcessHeap, 0, nSize);
+	else return NULL;
+}
+
+void SFFree(void *lpMem)
+{
+	if (!hProcessHeap) hProcessHeap = GetProcessHeap();
+	if (hProcessHeap) HeapFree(hProcessHeap, 0, lpMem);
+}
+*/
+
 BOOL GRPAPI WINAPI SetMpqDll(LPCSTR lpDllFileName)
 {
 	if (LoadStorm((char *)lpDllFileName)) return TRUE;
@@ -569,6 +586,7 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 	lpFrameData->lpRowSizes = (WORD *)malloc(lpFrameHeader->Height * sizeof(WORD));
 	lpFrameData->lpRowData = (LPBYTE *)malloc(lpFrameHeader->Height * sizeof(LPBYTE));
 	lpRowBuf = (LPBYTE)malloc(lpFrameHeader->Width * 2);
+	nLastOffset = lpFrameHeader->Height * sizeof(WORD);
 
 	for (y = 0; y < lpFrameHeader->Height; y++) {
 		i = nFrame * lpGrpHeader->wMaxWidth * lpGrpHeader->wMaxHeight + (lpFrameHeader->Top + y) * lpGrpHeader->wMaxWidth;
@@ -608,7 +626,8 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 							lpRowBuf[nBufPos]++;
 						}
 						x--;
-						nBufPos++;
+						if (nLastOffset + nBufPos + 1 <= 0xFFFF)
+							nBufPos++;
 						continue;
 					}
 
@@ -619,7 +638,8 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 						lpRowBuf[nBufPos] = 0x41 + nRepeat;
 						lpRowBuf[nBufPos+1] = (BYTE)lpImageData[i+x];
 						x += nRepeat;
-						nBufPos += 2;
+						if (nLastOffset + nBufPos + 2 <= 0xFFFF)
+							nBufPos += 2;
 					}
 					else {
 						lpRowBuf[nBufPos] = 0;
@@ -636,18 +656,21 @@ void EncodeFrameData(signed short *lpImageData, WORD nFrame, GRPHEADER *lpGrpHea
 							lpRowBuf[nBufPos+lpRowBuf[nBufPos]] = (BYTE)lpImageData[i+x];
 						}
 						x--;
-						nBufPos += 1 + lpRowBuf[nBufPos];
+						if (nLastOffset + nBufPos + 1 + lpRowBuf[nBufPos] <= 0xFFFF)
+							nBufPos += 1 + lpRowBuf[nBufPos];
 					}
 				}
 				else {
 					if (lpImageData[i+x] < 0) {
 						lpRowBuf[nBufPos] = 0x81;
-						nBufPos++;
+						if (nLastOffset + nBufPos + 1 <= 0xFFFF)
+							nBufPos++;
 					}
 					else {
 						lpRowBuf[nBufPos] = 1;
 						lpRowBuf[nBufPos+1] = (BYTE)lpImageData[i+x];
-						nBufPos += 2;
+						if (nLastOffset + nBufPos + 2 <= 0xFFFF)
+							nBufPos += 2;
 					}
 				}
 			}
