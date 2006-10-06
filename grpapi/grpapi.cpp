@@ -472,6 +472,7 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 	GrpHeader.wMaxHeight = wMaxHeight;
 	lpFrameHeaders = (FRAMEHEADER *)malloc(nFrames * sizeof(FRAMEHEADER));
 	lpFrameData = (FRAMEDATA *)malloc(nFrames * sizeof(FRAMEDATA));
+	nLastOffset = sizeof(GRPHEADER) + nFrames * sizeof(FRAMEHEADER);
 
 	for (i = 0; i < nFrames; i++) {
 		// Search for duplicate frames
