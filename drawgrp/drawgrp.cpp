@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 		SFileOpenArchive(buffer,3000,0,&hMPQ3);
 	}
 	BufferInfo BI;
-	LoadPalette("tileset\\Jungle.wpe",dwPalette);
+	LoadPalette("tileset\\Platform.wpe",dwPalette);
 	HANDLE hGrp, hGrp2;
 	if (argc>1)
 		hGrp = LoadGrp(argv[1]);
@@ -74,6 +74,8 @@ int main(int argc, char* argv[])
 	if (GetGrpInfo(hGrp,&GrpInfo)==0) {GrpInfo.nFrames=0;GrpInfo.wMaxWidth=0;GrpInfo.wMaxHeight=0;}
 	BI.nWidth = GrpInfo.wMaxWidth;
 	BI.nHeight = GrpInfo.wMaxHeight;
+	//BI.nWidth = 255;
+	//BI.nHeight = 255;
 	BI.pBuffer = (signed short *)malloc(GrpInfo.nFrames * BI.nWidth * BI.nHeight * sizeof(short));
 	WORD i,x,y;
 	DWORD j, nGrpSize;
@@ -92,30 +94,33 @@ int main(int argc, char* argv[])
 			rand_s(&v);
 			u = u % 800;
 			v = v % 600;
-			//DrawGrp(hGrp,hDC,u,v,i,dwPalette,ALPHA_BLEND,0x404040);
+			DrawGrp(hGrp,hDC,u,v,i,dwPalette,ALPHA_BLEND,0x404040);
 		}
 	}
 	SetFunctionGetPixel((GETPIXELPROC)ReadPixelFromBuffer);
 	SetFunctionSetPixel((SETPIXELPROC)WritePixelToBuffer);
 	for (i=0;i<GrpInfo.nFrames;i++) {
 		BI.nFrame = i;
+		u = (BI.nWidth - GrpInfo.wMaxWidth) / 2;
+		v = (BI.nHeight - GrpInfo.wMaxHeight) / 2;
 		for (y = 0; y < BI.nHeight; y++) {
 			for (x = 0; x < BI.nWidth; x++) {
-				WritePixelToBuffer(&BI, x, y, -1);
+				WritePixelToBuffer(&BI, x, y, 0);
 			}
 		}
-		DrawGrp(hGrp,(HDC)&BI,0,0,i,0,USE_INDEX,0);
+		DrawGrp(hGrp,(HDC)&BI,u,v,i,0,USE_INDEX,0);
 	}
 	hGrp2 = hGrp;
-	hGrp = CreateGrp(BI.pBuffer, GrpInfo.nFrames, GrpInfo.wMaxWidth, GrpInfo.wMaxHeight, FALSE, &nGrpSize);
+	hGrp = CreateGrp(BI.pBuffer, GrpInfo.nFrames, BI.nWidth, BI.nHeight, FALSE, &nGrpSize);
 	/*HANDLE hFile;
-	hFile = CreateFile("generated ultralisk.grp", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
+	hFile = CreateFile("generated zergling.grp", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
 	if (hFile != INVALID_HANDLE_VALUE) {
 		WriteFile(hFile, hGrp, nGrpSize, &j, 0);
 		CloseHandle(hFile);
 	}*/
 	BI.nFrame = 0xFFFF;
 	j=0;
+	
 	for (i=0;i<GrpInfo.nFrames;i+=1) {
 		rect.left = rect.top = 0;
 		rect.right = rect.left + BI.nWidth;
@@ -163,6 +168,7 @@ int main(int argc, char* argv[])
 			if (clrPixel != -1) SetPixelV(hDC, 400 + i, 300 + j, dwPalette[clrPixel]);
 		}
 	//}
+	
 	ReleaseDC(0,hDC);
 	free(BI.pBuffer);
     DestroyGrp(hGrp);
