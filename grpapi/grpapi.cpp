@@ -233,7 +233,8 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 				FrameSize = j;
 		}
 	}
-	if (FrameSize == 0xFFFFFF) {
+	if (FrameSize == 0xFFFFFF || FrameSize == GrpFrame->Width * GrpFrame->Height) {
+		FrameSize = 0xFFFFFF;
 		for (i = 0; i + 1 < GrpFile->nFrames; i++) {
 			j = GrpFrames[i].Offset - GrpFrames[0].Offset;
 			if (j > 0 && j < FrameSize)
