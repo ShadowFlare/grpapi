@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	if (argc>1)
 		hGrp = LoadGrp(argv[1]);
 	else
-		hGrp = LoadGrp("unit\\zerg\\ultra.grp");
+		hGrp = LoadGrp("unit\\zerg\\zergling.grp");
 	HDC hDC = GetDC(0);
 	GRPHEADER GrpInfo;
 	if (GetGrpInfo(hGrp,&GrpInfo)==0) {GrpInfo.nFrames=0;GrpInfo.wMaxWidth=0;GrpInfo.wMaxHeight=0;}
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 	signed short clrPixel;
 	RECT rect;
 	for (i=0;i<GrpInfo.nFrames;i++) {
-		for (j=0;j<8;j++)
+		for (j=0;j<16;j++)
 		{
 			rand_s(&u);
 			rand_s(&v);
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 		v = (BI.nHeight - GrpInfo.wMaxHeight) / 2;
 		for (y = 0; y < BI.nHeight; y++) {
 			for (x = 0; x < BI.nWidth; x++) {
-				WritePixelToBuffer(&BI, x, y, 0);
+				WritePixelToBuffer(&BI, x, y, -1);
 			}
 		}
 		DrawGrp(hGrp,(HDC)&BI,u,v,i,0,USE_INDEX,0);
