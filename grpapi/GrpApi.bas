@@ -40,6 +40,7 @@ Declare Function LoadGrp Lib "Grpapi.dll" (ByVal lpFileName As String) As Long
 Declare Function DestroyGrp Lib "Grpapi.dll" (ByVal hGrp As Long) As Boolean
 Declare Function DrawGrp Lib "Grpapi.dll" (ByVal hGrp As Long, ByVal hdcDest As Long, ByVal nXDest As Long, ByVal nYDest As Long, ByVal nFrame As Integer, dwPalette As Long, ByVal dwFlags As Long, ByVal dwAlpha As Long) As Boolean
 Declare Function GetGrpInfo Lib "Grpapi.dll" (ByVal hGrp As Long, GrpInfo As GRPHEADER) As Boolean
+Declare Function GetGrpFrameInfo Lib "Grpapi.dll" (ByVal hGrp As Long, ByVal nFrame As Integer, ByRef nLeft As Long, ByRef nTop As Long, ByRef nWidth As Long, ByRef nHeight As Long) As Boolean
 
 Declare Function GetDC Lib "User32.dll" (ByVal hWnd As Long) As Long
 Declare Function ReleaseDC Lib "User32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
