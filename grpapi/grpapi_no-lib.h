@@ -60,11 +60,13 @@ typedef HANDLE (WINAPI* funcLoadGrp)(LPCSTR lpFileName);
 typedef BOOL   (WINAPI* funcDestroyGrp)(HANDLE hGrp);
 typedef BOOL   (WINAPI* funcDrawGrp)(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
 typedef BOOL   (WINAPI* funcGetGrpInfo)(HANDLE hGrp, GRPHEADER *GrpInfo);
+typedef BOOL   (WINAPI* funcGetGrpFrameInfo)(HANDLE hGrp, WORD nFrame, DWORD *nLeft, DWORD *nTop, DWORD *nWidth, DWORD *nHeight);
 extern funcLoadPalette LoadPalette;
 extern funcLoadGrp LoadGrp;
 extern funcDestroyGrp DestroyGrp;
 extern funcDrawGrp DrawGrp;
 extern funcGetGrpInfo GetGrpInfo;
+extern funcGetGrpFrameInfo GetGrpFrameInfo;
 
 // A pointer to the raw image data to encode should be passed to lpImageData.  The size of
 // the buffer containing the data should be nFrames * wMaxWidth * wMaxHeight * sizeof(short)
