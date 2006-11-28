@@ -401,6 +401,19 @@ BOOL GRPAPI WINAPI GetGrpInfo(HANDLE hGrp, GRPHEADER *GrpInfo)
 	return TRUE;
 }
 
+BOOL GRPAPI WINAPI GetGrpFrameInfo(HANDLE hGrp, WORD nFrame, DWORD *nLeft, DWORD *nTop, DWORD *nWidth, DWORD *nHeight)
+{
+	if (!hGrp || hGrp==INVALID_HANDLE_VALUE) return FALSE;
+	FRAMEHEADER *GrpFrame = &((FRAMEHEADER *)(((char *)hGrp)+6))[nFrame];
+
+	if (nLeft) *nLeft = GrpFrame->Left;
+	if (nTop) *nTop = GrpFrame->Top;
+	if (nWidth) *nWidth = GrpFrame->Width;
+	if (nHeight) *nHeight = GrpFrame->Height;
+
+	return TRUE;
+}
+
 void GRPAPI WINAPI SetFunctionGetPixel(GETPIXELPROC lpGetPixelProc)
 {
 	if (!lpGetPixelProc)

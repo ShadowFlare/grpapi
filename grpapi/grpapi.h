@@ -62,6 +62,7 @@ HANDLE GRPAPI WINAPI LoadGrp(LPCSTR lpFileName);
 BOOL   GRPAPI WINAPI DestroyGrp(HANDLE hGrp);
 BOOL   GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
 BOOL   GRPAPI WINAPI GetGrpInfo(HANDLE hGrp, GRPHEADER *GrpInfo);
+BOOL   GRPAPI WINAPI GetGrpFrameInfo(HANDLE hGrp, WORD nFrame, DWORD *nLeft, DWORD *nTop, DWORD *nWidth, DWORD *nHeight);
 
 // A pointer to the raw image data to encode should be passed to lpImageData.  The size of
 // the buffer containing the data should be nFrames * wMaxWidth * wMaxHeight * sizeof(short)
