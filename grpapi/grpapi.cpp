@@ -223,24 +223,33 @@ BOOL GRPAPI WINAPI DrawGrp(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WOR
 	BYTE *GrpRaw = (BYTE *)GrpOffsets;
 	BYTE *RowData;
 	WORD x,ofs;
-	DWORD y;
+	DWORD y, nMaxOffset = 0;
 	WORD i;
-	int j;
-	if (nFrame + 1 < GrpFile->nFrames) {
-		for (i = 0; i + 1 < GrpFile->nFrames; i++) {
-			j = GrpFrames[i].Offset - GrpFrame->Offset;
-			if (j > 0 && j < FrameSize)
-				FrameSize = j;
-		}
+	int j, nFirstNonBlankFrame = 0;
+	for (i = 0; i < GrpFile->nFrames; i++) {
+		j = GrpFrames[i].Offset - GrpFrame->Offset;
+		if (j > 0 && j < FrameSize)
+			FrameSize = j;
+		if (GrpFrames[i].Offset > nMaxOffset)
+			nMaxOffset = GrpFrames[i].Offset;
 	}
 	if (FrameSize == 0xFFFFFF || FrameSize == GrpFrame->Width * GrpFrame->Height) {
 		FrameSize = 0xFFFFFF;
-		for (i = 0; i + 1 < GrpFile->nFrames; i++) {
-			j = GrpFrames[i].Offset - GrpFrames[0].Offset;
+		for (i = 0; i < GrpFile->nFrames; i++) {
+			if (GrpFrames[i].Width != 0 && GrpFrames[i].Height != 0 && GrpFrames[i].Offset != GrpFrame->Offset && GrpFrames[i].Offset != nMaxOffset) {
+				nFirstNonBlankFrame = i;
+				break;
+			}
+		}
+		if (i == GrpFile->nFrames)
+			nFirstNonBlankFrame = nFrame;
+
+		for (i = 0; i < GrpFile->nFrames; i++) {
+			j = GrpFrames[i].Offset - GrpFrames[nFirstNonBlankFrame].Offset;
 			if (j > 0 && j < FrameSize)
 				FrameSize = j;
 		}
-		if (FrameSize == GrpFrames[0].Width * GrpFrames[0].Height)
+		if (FrameSize == GrpFrames[nFirstNonBlankFrame].Width * GrpFrames[nFirstNonBlankFrame].Height)
 			FrameSize = GrpFrame->Width * GrpFrame->Height;
 	}
 	if (!(dwFlags&HORIZONTAL_FLIP) && !(dwFlags&VERTICAL_FLIP)) {
