@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 	}*/
 	signed short clrPixel;
 	RECT rect;
-	for (i=0;i<GrpInfo.nFrames;i++) {
+	/*for (i=0;i<GrpInfo.nFrames;i++) {
 		for (j=0;j<16;j++)
 		{
 			rand_s(&u);
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 			v = v % 600;
 			DrawGrp(hGrp,hDC,u,v,i,dwPalette,ALPHA_BLEND,0x404040);
 		}
-	}
+	}*/
 	SetFunctionGetPixel((GETPIXELPROC)ReadPixelFromBuffer);
 	SetFunctionSetPixel((SETPIXELPROC)WritePixelToBuffer);
 	for (i=0;i<GrpInfo.nFrames;i++) {
