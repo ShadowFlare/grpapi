@@ -499,20 +499,6 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 	nLastOffset = sizeof(GRPHEADER) + nFrames * sizeof(FRAMEHEADER);
 
 	for (i = 0; i < nFrames; i++) {
-		// Search for duplicate frames
-		for (j = 0; j < i; j++) {
-			if (memcmp(&lpImageData[i * wMaxWidth * wMaxHeight],
-			           &lpImageData[j * wMaxWidth * wMaxHeight],
-					   wMaxWidth * wMaxHeight * sizeof(short)) == 0)
-				break;
-		}
-
-		if (j < i) {
-			memcpy(&lpFrameHeaders[i], &lpFrameHeaders[j], sizeof(FRAMEHEADER));
-			lpFrameData[i].lpRowOffsets = 0;
-			continue;
-		}
-
 		lpFrameHeaders[i].Offset = nLastOffset;
 
 		// Scan frame to find dimensions of used part
@@ -540,6 +526,47 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 		lpFrameHeaders[i].Height = y2;
 
 		EncodeFrameData(lpImageData, i, &GrpHeader, &lpFrameHeaders[i], &lpFrameData[i], bNoCompress);
+
+		// Search for duplicate frames
+		for (j = 0; j < i; j++) {
+			if (lpFrameData[j].lpRowOffsets && lpFrameHeaders[i].Width == lpFrameHeaders[j].Width && lpFrameHeaders[i].Height == lpFrameHeaders[j].Height && lpFrameData[i].Size == lpFrameData[j].Size) {
+				for (y = 0; y < lpFrameHeaders[i].Height; y++) {
+					if (!lpFrameData[i].lpRowData[y] && !lpFrameData[j].lpRowData[y])
+						continue;
+
+					if ((!lpFrameData[i].lpRowData[y] && lpFrameData[j].lpRowData[y]) || (lpFrameData[i].lpRowData[y] && !lpFrameData[j].lpRowData[y]) || lpFrameData[i].lpRowSizes[y] != lpFrameData[j].lpRowSizes[y])
+						break;
+
+					if (memcmp(lpFrameData[i].lpRowData[y], lpFrameData[j].lpRowData[y], lpFrameData[i].lpRowSizes[y]) != 0)
+						break;
+				}
+
+				if (y == lpFrameHeaders[i].Height) {
+					break;
+				}
+			}
+		}
+
+		if (j < i) {
+			// Duplicate frame found, free stored frame data and change offset
+			for (y = 0; y < lpFrameHeaders[i].Height; y++) {
+				if (lpFrameData[i].lpRowData[y]) {
+					free(lpFrameData[i].lpRowData[y]);
+				}
+			}
+
+			free(lpFrameData[i].lpRowOffsets);
+			free(lpFrameData[i].lpRowSizes);
+			free(lpFrameData[i].lpRowData);
+
+			lpFrameHeaders[i].Offset = lpFrameHeaders[j].Offset;
+			lpFrameData[i].lpRowOffsets = 0;
+			lpFrameData[i].lpRowSizes = 0;
+			lpFrameData[i].lpRowData = 0;
+			lpFrameData[i].Size = 0;
+			continue;
+		}
+
 		nLastOffset = lpFrameHeaders[i].Offset + lpFrameData[i].Size;
 	}
 
