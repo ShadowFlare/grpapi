@@ -525,20 +525,18 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 		lpFrameHeaders[i].Width = x2;
 		lpFrameHeaders[i].Height = y2;
 
-		EncodeFrameData(lpImageData, i, &GrpHeader, &lpFrameHeaders[i], &lpFrameData[i], bNoCompress);
-
 		// Search for duplicate frames
 		for (j = 0; j < i; j++) {
-			if (lpFrameData[j].lpRowOffsets && lpFrameHeaders[i].Width == lpFrameHeaders[j].Width && lpFrameHeaders[i].Height == lpFrameHeaders[j].Height && lpFrameData[i].Size == lpFrameData[j].Size) {
+			if (lpFrameData[j].lpRowOffsets && lpFrameHeaders[i].Width == lpFrameHeaders[j].Width && lpFrameHeaders[i].Height == lpFrameHeaders[j].Height) {
+				y1 = i * wMaxWidth * wMaxHeight + lpFrameHeaders[i].Top * wMaxWidth + lpFrameHeaders[i].Left;
+				y2 = j * wMaxWidth * wMaxHeight + lpFrameHeaders[j].Top * wMaxWidth + lpFrameHeaders[j].Left;
+
 				for (y = 0; y < lpFrameHeaders[i].Height; y++) {
-					if (!lpFrameData[i].lpRowData[y] && !lpFrameData[j].lpRowData[y])
-						continue;
-
-					if ((!lpFrameData[i].lpRowData[y] && lpFrameData[j].lpRowData[y]) || (lpFrameData[i].lpRowData[y] && !lpFrameData[j].lpRowData[y]) || lpFrameData[i].lpRowSizes[y] != lpFrameData[j].lpRowSizes[y])
+					if (memcmp(&lpImageData[y1], &lpImageData[y2], lpFrameHeaders[i].Width * sizeof(short)) != 0)
 						break;
 
-					if (memcmp(lpFrameData[i].lpRowData[y], lpFrameData[j].lpRowData[y], lpFrameData[i].lpRowSizes[y]) != 0)
-						break;
+					y1 += wMaxWidth;
+					y2 += wMaxWidth;
 				}
 
 				if (y == lpFrameHeaders[i].Height) {
@@ -548,17 +546,7 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 		}
 
 		if (j < i) {
-			// Duplicate frame found, free stored frame data and change offset
-			for (y = 0; y < lpFrameHeaders[i].Height; y++) {
-				if (lpFrameData[i].lpRowData[y]) {
-					free(lpFrameData[i].lpRowData[y]);
-				}
-			}
-
-			free(lpFrameData[i].lpRowOffsets);
-			free(lpFrameData[i].lpRowSizes);
-			free(lpFrameData[i].lpRowData);
-
+			// Duplicate frame found, set offset and flag as duplicate
 			lpFrameHeaders[i].Offset = lpFrameHeaders[j].Offset;
 			lpFrameData[i].lpRowOffsets = 0;
 			lpFrameData[i].lpRowSizes = 0;
@@ -567,6 +555,7 @@ HANDLE GRPAPI WINAPI CreateGrp(signed short *lpImageData, WORD nFrames, WORD wMa
 			continue;
 		}
 
+		EncodeFrameData(lpImageData, i, &GrpHeader, &lpFrameHeaders[i], &lpFrameData[i], bNoCompress);
 		nLastOffset = lpFrameHeaders[i].Offset + lpFrameData[i].Size;
 	}
 
