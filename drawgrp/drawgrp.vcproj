@@ -5,9 +5,6 @@
 	Name="drawgrp"
 	ProjectGUID="{10729DB2-5CEA-41BA-9C6F-B47BE5A3C242}"
 	RootNamespace="drawgrp"
-	SccProjectName="&quot;$/grpapi_VS2005.root/grpapi&quot;, IGAAAAAA"
-	SccLocalPath=".."
-	SccProvider="MSSCCI:Microsoft Visual SourceSafe"
 	>
 	<Platforms>
 		<Platform

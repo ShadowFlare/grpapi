@@ -1,3 +1,5 @@
+/* License information for this code is in license.txt */
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by grpapi.rc

@@ -1,6 +1,7 @@
 /*
 
-  ShadowFlare GRP Library. (c) ShadowFlare Software 2002-2006
+  ShadowFlare GRP Library. (c) ShadowFlare Software 2002-2008
+  License information for this code is in license.txt
 
   Any comments or suggestions are accepted at blakflare@hotmail.com (ShadowFlare)
 */

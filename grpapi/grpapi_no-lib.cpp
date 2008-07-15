@@ -1,3 +1,5 @@
+/* License information for this code is in license.txt */
+
 #include "grpapi_no-lib.h"
 
 struct GRPAPIMODULE {
@@ -7,18 +9,18 @@ struct GRPAPIMODULE {
 
 HINSTANCE hGrpApi = 0;
 
-funcLoadPalette LoadPalette = 0;
-funcLoadGrp LoadGrp = 0;
-funcDestroyGrp DestroyGrp = 0;
-funcDrawGrp DrawGrp = 0;
-funcGetGrpInfo GetGrpInfo = 0;
-funcGetGrpFrameInfo GetGrpFrameInfo = 0;
-funcCreateGrp CreateGrp = 0;
-funcSetFunctionGetPixel SetFunctionGetPixel = 0;
-funcSetFunctionSetPixel SetFunctionSetPixel = 0;
-funcSetMpqDll SetMpqDll = 0;
-funcLoadGrpApi LoadGrpApi = 0;
-funcFreeGrpApi FreeGrpApi = 0;
+BOOL   (WINAPI* LoadPalette)(LPCSTR lpFileName, DWORD *dwPaletteBuffer) = 0;
+HANDLE (WINAPI* LoadGrp)(LPCSTR lpFileName) = 0;
+BOOL   (WINAPI* DestroyGrp)(HANDLE hGrp) = 0;
+BOOL   (WINAPI* DrawGrp)(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha) = 0;
+BOOL   (WINAPI* GetGrpInfo)(HANDLE hGrp, GRPHEADER *GrpInfo) = 0;
+BOOL   (WINAPI* GetGrpFrameInfo)(HANDLE hGrp, WORD nFrame, DWORD *nLeft, DWORD *nTop, DWORD *nWidth, DWORD *nHeight) = 0;
+HANDLE (WINAPI* CreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, BOOL bNoCompress, DWORD *nGrpSize) = 0;
+void (WINAPI* SetFunctionGetPixel)(GETPIXELPROC lpGetPixelProc) = 0;
+void (WINAPI* SetFunctionSetPixel)(SETPIXELPROC lpSetPixelProc) = 0;
+BOOL (WINAPI* SetMpqDll)(LPCSTR lpDllFileName) = 0;
+BOOL   (WINAPI* LoadGrpApi)() = 0;
+void   (WINAPI* FreeGrpApi)() = 0;
 
 GRPAPIMODULE::GRPAPIMODULE()
 {
@@ -26,18 +28,18 @@ GRPAPIMODULE::GRPAPIMODULE()
 	hGrpApi = LoadLibrary("grpapi.dll");
 
 	if (hGrpApi!=0) {
-		LoadPalette = (funcLoadPalette)GetProcAddress(hGrpApi,"LoadPalette");
-		LoadGrp = (funcLoadGrp)GetProcAddress(hGrpApi,"LoadGrp");
-		DestroyGrp = (funcDestroyGrp)GetProcAddress(hGrpApi,"DestroyGrp");
-		DrawGrp = (funcDrawGrp)GetProcAddress(hGrpApi,"DrawGrp");
-		GetGrpInfo = (funcGetGrpInfo)GetProcAddress(hGrpApi,"GetGrpInfo");
-		GetGrpFrameInfo = (funcGetGrpFrameInfo)GetProcAddress(hGrpApi,"GetGrpFrameInfo");
-		CreateGrp = (funcCreateGrp)GetProcAddress(hGrpApi,"CreateGrp");
-		SetFunctionGetPixel = (funcSetFunctionGetPixel)GetProcAddress(hGrpApi,"SetFunctionGetPixel");
-		SetFunctionSetPixel = (funcSetFunctionSetPixel)GetProcAddress(hGrpApi,"SetFunctionSetPixel");
-		SetMpqDll = (funcSetMpqDll)GetProcAddress(hGrpApi,"SetMpqDll");
-		LoadGrpApi = (funcLoadGrpApi)GetProcAddress(hGrpApi,"LoadGrpApi");
-		FreeGrpApi = (funcFreeGrpApi)GetProcAddress(hGrpApi,"FreeGrpApi");
+		*(FARPROC *)&LoadPalette = GetProcAddress(hGrpApi,"LoadPalette");
+		*(FARPROC *)&LoadGrp = GetProcAddress(hGrpApi,"LoadGrp");
+		*(FARPROC *)&DestroyGrp = GetProcAddress(hGrpApi,"DestroyGrp");
+		*(FARPROC *)&DrawGrp = GetProcAddress(hGrpApi,"DrawGrp");
+		*(FARPROC *)&GetGrpInfo = GetProcAddress(hGrpApi,"GetGrpInfo");
+		*(FARPROC *)&GetGrpFrameInfo = GetProcAddress(hGrpApi,"GetGrpFrameInfo");
+		*(FARPROC *)&CreateGrp = GetProcAddress(hGrpApi,"CreateGrp");
+		*(FARPROC *)&SetFunctionGetPixel = GetProcAddress(hGrpApi,"SetFunctionGetPixel");
+		*(FARPROC *)&SetFunctionSetPixel = GetProcAddress(hGrpApi,"SetFunctionSetPixel");
+		*(FARPROC *)&SetMpqDll = GetProcAddress(hGrpApi,"SetMpqDll");
+		*(FARPROC *)&LoadGrpApi = GetProcAddress(hGrpApi,"LoadGrpApi");
+		*(FARPROC *)&FreeGrpApi = GetProcAddress(hGrpApi,"FreeGrpApi");
 	}
 }
 

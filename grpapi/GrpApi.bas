@@ -1,7 +1,8 @@
 Attribute VB_Name = "GrpApi"
 Option Explicit
 
-'  ShadowFlare GRP Library. (c) ShadowFlare Software 2002-2006
+'  ShadowFlare GRP Library. (c) ShadowFlare Software 2002-2008
+'  License information for this code is in license.txt
 
 '  Any comments or suggestions are accepted at blakflare@hotmail.com (ShadowFlare)
 
@@ -81,18 +82,18 @@ Declare Sub CopyMemory Lib "Kernel32.dll" _
 '
 ' The functions must be in this form:
 '
-' Function GetPixelProc (ByRef value As any_type, X As Long, Y As Long) As Long
-' Sub SetPixelProc (ByRef value As any_type, X As Long, Y As Long, clrColor As Long)
+' Function GetPixelProc (ByRef value As any_type, ByVal X As Long, ByVal Y As Long) As Long
+' Sub SetPixelProc (ByRef value As any_type, ByVal X As Long, ByVal Y As Long, ByVal clrColor As Long)
 '
 ' or
 '
-' Function GetPixelProc (ByVal value As any_type, X As Long, Y As Long) As Long
-' Sub SetPixelProc (ByVal value As any_type, X As Long, Y As Long, clrColor As Long)
+' Function GetPixelProc (ByVal value As any_type, ByVal X As Long, ByVal Y As Long) As Long
+' Sub SetPixelProc (ByVal value As any_type, ByVal X As Long, ByVal Y As Long, ByVal clrColor As Long)
 '
-' Replace "any_type" with whatever type you want.  This parameter gets the data from
-' DrawGrp's hdcDest parameter.  You can either pass a number to DrawGrp and use the
-' "ByVal" versions of the above functions, or you can use AddressOf to get a reference
-' to a variable and use it for the "ByRef" versions.
+' Replace "any_type" with whatever type you want (but must be 4 bytes long if ByVal).
+' This parameter gets the data from DrawGrp's hdcDest parameter.  You can either pass
+' a number to DrawGrp and use the "ByVal" versions of the above functions, or you can
+' use AddressOf to get a reference to a variable and use it for the "ByRef" versions.
 ' GetPixelProc should return an RGB color value.
 Declare Sub SetFunctionGetPixel Lib "Grpapi.dll" (lpGetPixelProc As Long)
 Declare Sub SetFunctionSetPixel Lib "Grpapi.dll" (lpSetPixelProc As Long)

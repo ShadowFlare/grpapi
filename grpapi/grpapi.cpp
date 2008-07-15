@@ -1,3 +1,5 @@
+/* License information for this code is in license.txt */
+
 #include "grpapi.h"
 #include "../LoadStorm/storm.h"
 #include <malloc.h>

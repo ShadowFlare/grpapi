@@ -1,6 +1,7 @@
 /*
 	Storm.cpp
 */
+/* License information for this code is in license.txt */
 
 #include "storm.h"
 
@@ -9,27 +10,28 @@ struct STORMMODULE {
 	~STORMMODULE();
 } Storm;
 
+void LoadStormFunctions();
 void FreeStorm();
 
 HINSTANCE hStorm = 0;
 BOOL AlreadyLoaded = FALSE;
 
 // Storm Function Names
-funcSFileCloseArchive SFileCloseArchive = 0;
-funcSFileCloseFile SFileCloseFile = 0;
-funcSFileDestroy SFileDestroy = 0;
-funcSFileGetFileArchive SFileGetFileArchive = 0;
-funcSFileGetFileSize SFileGetFileSize = 0;
-funcSFileOpenArchive SFileOpenArchive = 0;
-funcSFileOpenFile SFileOpenFile = 0;
-funcSFileOpenFileEx SFileOpenFileEx = 0;
-funcSFileReadFile SFileReadFile = 0;
-funcSFileSetBasePath SFileSetBasePath = 0;
-funcSFileSetFilePointer SFileSetFilePointer = 0;
-funcSFileSetLocale SFileSetLocale = 0;
-funcSFileGetBasePath SFileGetBasePath = 0;
-funcSFileGetArchiveName SFileGetArchiveName = 0;
-funcSFileGetFileName SFileGetFileName = 0;
+BOOL  (WINAPI* SFileOpenArchive)(LPCSTR lpFilename, DWORD dwPriority, DWORD dwFlags, MPQHANDLE *hMPQ) = 0;
+BOOL  (WINAPI* SFileCloseArchive)(MPQHANDLE hMPQ) = 0;
+BOOL  (WINAPI* SFileOpenFile)(LPCSTR lpFileName, MPQHANDLE *hFile) = 0;
+BOOL  (WINAPI* SFileOpenFileEx)(MPQHANDLE hMPQ, LPCSTR lpFileName, DWORD dwSearchScope, MPQHANDLE *hFile) = 0;
+BOOL  (WINAPI* SFileCloseFile)(MPQHANDLE hFile) = 0;
+DWORD (WINAPI* SFileGetFileSize)(MPQHANDLE hFile, LPDWORD lpFileSizeHigh) = 0;
+DWORD (WINAPI* SFileSetFilePointer)(MPQHANDLE hFile, long lDistanceToMove, PLONG lplDistanceToMoveHigh, DWORD dwMoveMethod) = 0;
+BOOL  (WINAPI* SFileReadFile)(MPQHANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped) = 0;
+LCID  (WINAPI* SFileSetLocale)(LCID nNewLocale) = 0;
+BOOL  (WINAPI* SFileDestroy)() = 0;
+BOOL  (WINAPI* SFileGetArchiveName)(MPQHANDLE hMPQ, LPCSTR lpBuffer, DWORD dwBufferLength) = 0;
+BOOL  (WINAPI* SFileGetFileName)(MPQHANDLE hFile, LPCSTR lpBuffer, DWORD dwBufferLength) = 0;
+BOOL  (WINAPI* SFileGetFileArchive)(MPQHANDLE hFile, MPQHANDLE *hMPQ) = 0;
+BOOL  (WINAPI* SFileGetBasePath)(LPCSTR lpBuffer, DWORD dwBufferLength) = 0;
+BOOL  (WINAPI* SFileSetBasePath)(LPCSTR lpNewBasePath) = 0;
 
 STORMMODULE::STORMMODULE()
 {
@@ -39,24 +41,7 @@ STORMMODULE::STORMMODULE()
 	if (hStorm == NULL) hStorm = LoadLibrary(STORM_DLL);
 	else AlreadyLoaded=TRUE;
 
-	if (hStorm != NULL)
-	{
-		SFileCloseArchive = (funcSFileCloseArchive)GetProcAddress(hStorm, (LPCSTR)0xFC);
-		SFileCloseFile = (funcSFileCloseFile)GetProcAddress(hStorm, (LPCSTR)0xFD);
-		SFileDestroy = (funcSFileDestroy)GetProcAddress(hStorm, (LPCSTR)0x106);
-		SFileGetFileArchive = (funcSFileGetFileArchive)GetProcAddress(hStorm, (LPCSTR)0x108);
-		SFileGetFileSize = (funcSFileGetFileSize)GetProcAddress(hStorm, (LPCSTR)0x109);
-		SFileOpenArchive = (funcSFileOpenArchive)GetProcAddress(hStorm, (LPCSTR)0x10A);
-		SFileOpenFile = (funcSFileOpenFile)GetProcAddress(hStorm, (LPCSTR)0x10B);
-		SFileOpenFileEx = (funcSFileOpenFileEx)GetProcAddress(hStorm, (LPCSTR)0x10C);
-		SFileReadFile = (funcSFileReadFile)GetProcAddress(hStorm, (LPCSTR)0x10D);
-		SFileSetBasePath = (funcSFileSetBasePath)GetProcAddress(hStorm, (LPCSTR)0x10E);
-		SFileSetFilePointer = (funcSFileSetFilePointer)GetProcAddress(hStorm, (LPCSTR)0x10F);
-		SFileSetLocale = (funcSFileSetLocale)GetProcAddress(hStorm, (LPCSTR)0x110);
-		SFileGetBasePath = (funcSFileGetBasePath)GetProcAddress(hStorm, (LPCSTR)0x111);
-		SFileGetArchiveName = (funcSFileGetArchiveName)GetProcAddress(hStorm, (LPCSTR)0x113);
-		SFileGetFileName = (funcSFileGetFileName)GetProcAddress(hStorm, (LPCSTR)0x114);
-	}
+	LoadStormFunctions();
 	if (SFileDestroy && !AlreadyLoaded) SFileDestroy();
 }
 
@@ -73,27 +58,32 @@ HINSTANCE LoadStorm(char * DllFileName)
 	if (hStorm == NULL) hStorm = LoadLibrary(DllFileName);
 	else AlreadyLoaded=TRUE;
 
-	if (hStorm != NULL)
-	{
-		SFileCloseArchive = (funcSFileCloseArchive)GetProcAddress(hStorm, (LPCSTR)0xFC);
-		SFileCloseFile = (funcSFileCloseFile)GetProcAddress(hStorm, (LPCSTR)0xFD);
-		SFileDestroy = (funcSFileDestroy)GetProcAddress(hStorm, (LPCSTR)0x106);
-		SFileGetFileArchive = (funcSFileGetFileArchive)GetProcAddress(hStorm, (LPCSTR)0x108);
-		SFileGetFileSize = (funcSFileGetFileSize)GetProcAddress(hStorm, (LPCSTR)0x109);
-		SFileOpenArchive = (funcSFileOpenArchive)GetProcAddress(hStorm, (LPCSTR)0x10A);
-		SFileOpenFile = (funcSFileOpenFile)GetProcAddress(hStorm, (LPCSTR)0x10B);
-		SFileOpenFileEx = (funcSFileOpenFileEx)GetProcAddress(hStorm, (LPCSTR)0x10C);
-		SFileReadFile = (funcSFileReadFile)GetProcAddress(hStorm, (LPCSTR)0x10D);
-		SFileSetBasePath = (funcSFileSetBasePath)GetProcAddress(hStorm, (LPCSTR)0x10E);
-		SFileSetFilePointer = (funcSFileSetFilePointer)GetProcAddress(hStorm, (LPCSTR)0x10F);
-		SFileSetLocale = (funcSFileSetLocale)GetProcAddress(hStorm, (LPCSTR)0x110);
-		SFileGetBasePath = (funcSFileGetBasePath)GetProcAddress(hStorm, (LPCSTR)0x111);
-		SFileGetArchiveName = (funcSFileGetArchiveName)GetProcAddress(hStorm, (LPCSTR)0x113);
-		SFileGetFileName = (funcSFileGetFileName)GetProcAddress(hStorm, (LPCSTR)0x114);
-	}
+	LoadStormFunctions();
 	if (SFileDestroy && !AlreadyLoaded) SFileDestroy();
 	if (AlreadyLoaded==TRUE) return 0;
 	return hStorm;
+}
+
+void LoadStormFunctions()
+{
+	if (hStorm != NULL)
+	{
+		*(FARPROC *)&SFileCloseArchive = GetProcAddress(hStorm, (LPCSTR)0xFC);
+		*(FARPROC *)&SFileCloseFile = GetProcAddress(hStorm, (LPCSTR)0xFD);
+		*(FARPROC *)&SFileDestroy = GetProcAddress(hStorm, (LPCSTR)0x106);
+		*(FARPROC *)&SFileGetFileArchive = GetProcAddress(hStorm, (LPCSTR)0x108);
+		*(FARPROC *)&SFileGetFileSize = GetProcAddress(hStorm, (LPCSTR)0x109);
+		*(FARPROC *)&SFileOpenArchive = GetProcAddress(hStorm, (LPCSTR)0x10A);
+		*(FARPROC *)&SFileOpenFile = GetProcAddress(hStorm, (LPCSTR)0x10B);
+		*(FARPROC *)&SFileOpenFileEx = GetProcAddress(hStorm, (LPCSTR)0x10C);
+		*(FARPROC *)&SFileReadFile = GetProcAddress(hStorm, (LPCSTR)0x10D);
+		*(FARPROC *)&SFileSetBasePath = GetProcAddress(hStorm, (LPCSTR)0x10E);
+		*(FARPROC *)&SFileSetFilePointer = GetProcAddress(hStorm, (LPCSTR)0x10F);
+		*(FARPROC *)&SFileSetLocale = GetProcAddress(hStorm, (LPCSTR)0x110);
+		*(FARPROC *)&SFileGetBasePath = GetProcAddress(hStorm, (LPCSTR)0x111);
+		*(FARPROC *)&SFileGetArchiveName = GetProcAddress(hStorm, (LPCSTR)0x113);
+		*(FARPROC *)&SFileGetFileName = GetProcAddress(hStorm, (LPCSTR)0x114);
+	}
 }
 
 void FreeStorm()

@@ -1,3 +1,5 @@
+/* License information for this code is in license.txt */
+
 #ifndef STORM_H_INCLUDED
 #define STORM_H_INCLUDED
 
@@ -19,38 +21,21 @@ extern HINSTANCE LoadStorm(char * DllFileName);
 #define MPQHANDLE HANDLE
 
 // Storm Function Prototypes
-typedef BOOL  (WINAPI* funcSFileOpenArchive)(LPCSTR lpFilename, DWORD dwPriority, DWORD dwFlags, MPQHANDLE *hMPQ);
-typedef BOOL  (WINAPI* funcSFileCloseArchive)(MPQHANDLE hMPQ);
-typedef BOOL  (WINAPI* funcSFileOpenFile)(LPCSTR lpFileName, MPQHANDLE *hFile);
-typedef BOOL  (WINAPI* funcSFileOpenFileEx)(MPQHANDLE hMPQ, LPCSTR lpFileName, DWORD dwSearchScope, MPQHANDLE *hFile);
-typedef BOOL  (WINAPI* funcSFileCloseFile)(MPQHANDLE hFile);
-typedef DWORD (WINAPI* funcSFileGetFileSize)(MPQHANDLE hFile, LPDWORD lpFileSizeHigh);
-typedef DWORD (WINAPI* funcSFileSetFilePointer)(MPQHANDLE hFile, long lDistanceToMove, PLONG lplDistanceToMoveHigh, DWORD dwMoveMethod);
-typedef BOOL  (WINAPI* funcSFileReadFile)(MPQHANDLE hFile,LPVOID lpBuffer,DWORD nNumberOfBytesToRead,LPDWORD lpNumberOfBytesRead,LPOVERLAPPED lpOverlapped);
-typedef LCID  (WINAPI* funcSFileSetLocale)(LCID nNewLocale);
-typedef BOOL  (WINAPI* funcSFileDestroy)();
-typedef BOOL  (WINAPI* funcSFileGetArchiveName)(MPQHANDLE hMPQ, LPCSTR lpBuffer, DWORD dwBufferLength);
-typedef BOOL  (WINAPI* funcSFileGetFileName)(MPQHANDLE hFile, LPCSTR lpBuffer, DWORD dwBufferLength);
-typedef BOOL  (WINAPI* funcSFileGetFileArchive)(MPQHANDLE hFile, MPQHANDLE *hMPQ);
-typedef BOOL  (WINAPI* funcSFileGetBasePath)(LPCSTR lpBuffer, DWORD dwBufferLength);
-typedef BOOL  (WINAPI* funcSFileSetBasePath)(LPCSTR lpNewBasePath);
-
-// Storm Function Names
-extern funcSFileCloseArchive SFileCloseArchive;
-extern funcSFileCloseFile SFileCloseFile;
-extern funcSFileDestroy SFileDestroy;
-extern funcSFileGetFileArchive SFileGetFileArchive;
-extern funcSFileGetFileSize SFileGetFileSize;
-extern funcSFileOpenArchive SFileOpenArchive;
-extern funcSFileOpenFile SFileOpenFile;
-extern funcSFileOpenFileEx SFileOpenFileEx;
-extern funcSFileReadFile SFileReadFile;
-extern funcSFileSetBasePath SFileSetBasePath;
-extern funcSFileSetFilePointer SFileSetFilePointer;
-extern funcSFileSetLocale SFileSetLocale;
-extern funcSFileGetBasePath SFileGetBasePath;
-extern funcSFileGetArchiveName SFileGetArchiveName;
-extern funcSFileGetFileName SFileGetFileName;
+extern BOOL  (WINAPI* SFileOpenArchive)(LPCSTR lpFilename, DWORD dwPriority, DWORD dwFlags, MPQHANDLE *hMPQ);
+extern BOOL  (WINAPI* SFileCloseArchive)(MPQHANDLE hMPQ);
+extern BOOL  (WINAPI* SFileOpenFile)(LPCSTR lpFileName, MPQHANDLE *hFile);
+extern BOOL  (WINAPI* SFileOpenFileEx)(MPQHANDLE hMPQ, LPCSTR lpFileName, DWORD dwSearchScope, MPQHANDLE *hFile);
+extern BOOL  (WINAPI* SFileCloseFile)(MPQHANDLE hFile);
+extern DWORD (WINAPI* SFileGetFileSize)(MPQHANDLE hFile, LPDWORD lpFileSizeHigh);
+extern DWORD (WINAPI* SFileSetFilePointer)(MPQHANDLE hFile, long lDistanceToMove, PLONG lplDistanceToMoveHigh, DWORD dwMoveMethod);
+extern BOOL  (WINAPI* SFileReadFile)(MPQHANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped);
+extern LCID  (WINAPI* SFileSetLocale)(LCID nNewLocale);
+extern BOOL  (WINAPI* SFileDestroy)();
+extern BOOL  (WINAPI* SFileGetArchiveName)(MPQHANDLE hMPQ, LPCSTR lpBuffer, DWORD dwBufferLength);
+extern BOOL  (WINAPI* SFileGetFileName)(MPQHANDLE hFile, LPCSTR lpBuffer, DWORD dwBufferLength);
+extern BOOL  (WINAPI* SFileGetFileArchive)(MPQHANDLE hFile, MPQHANDLE *hMPQ);
+extern BOOL  (WINAPI* SFileGetBasePath)(LPCSTR lpBuffer, DWORD dwBufferLength);
+extern BOOL  (WINAPI* SFileSetBasePath)(LPCSTR lpNewBasePath);
 
 #ifdef __cplusplus
 };  // extern "C" 

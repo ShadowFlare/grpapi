@@ -1,6 +1,7 @@
 /*
 
-  ShadowFlare GRP Library. (c) ShadowFlare Software 2002
+  ShadowFlare GRP Library. (c) ShadowFlare Software 2002-2008
+  License information for this code is in license.txt
 
   Any comments or suggestions are accepted at blakflare@hotmail.com (ShadowFlare)
 */
@@ -55,18 +56,12 @@ typedef struct {
 // Palette is an array of 256 DWORD's
 // For LoadPalette and LoadGrp, lpFileName may be a file in an open mpq archive
 // or a file not in an archive
-typedef BOOL   (WINAPI* funcLoadPalette)(LPCSTR lpFileName, DWORD *dwPaletteBuffer);
-typedef HANDLE (WINAPI* funcLoadGrp)(LPCSTR lpFileName);
-typedef BOOL   (WINAPI* funcDestroyGrp)(HANDLE hGrp);
-typedef BOOL   (WINAPI* funcDrawGrp)(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
-typedef BOOL   (WINAPI* funcGetGrpInfo)(HANDLE hGrp, GRPHEADER *GrpInfo);
-typedef BOOL   (WINAPI* funcGetGrpFrameInfo)(HANDLE hGrp, WORD nFrame, DWORD *nLeft, DWORD *nTop, DWORD *nWidth, DWORD *nHeight);
-extern funcLoadPalette LoadPalette;
-extern funcLoadGrp LoadGrp;
-extern funcDestroyGrp DestroyGrp;
-extern funcDrawGrp DrawGrp;
-extern funcGetGrpInfo GetGrpInfo;
-extern funcGetGrpFrameInfo GetGrpFrameInfo;
+extern BOOL   (WINAPI* LoadPalette)(LPCSTR lpFileName, DWORD *dwPaletteBuffer);
+extern HANDLE (WINAPI* LoadGrp)(LPCSTR lpFileName);
+extern BOOL   (WINAPI* DestroyGrp)(HANDLE hGrp);
+extern BOOL   (WINAPI* DrawGrp)(HANDLE hGrp, HDC hdcDest, int nXDest, int nYDest, WORD nFrame, DWORD *dwPalette, DWORD dwFlags, DWORD dwAlpha);
+extern BOOL   (WINAPI* GetGrpInfo)(HANDLE hGrp, GRPHEADER *GrpInfo);
+extern BOOL   (WINAPI* GetGrpFrameInfo)(HANDLE hGrp, WORD nFrame, DWORD *nLeft, DWORD *nTop, DWORD *nWidth, DWORD *nHeight);
 
 // A pointer to the raw image data to encode should be passed to lpImageData.  The size of
 // the buffer containing the data should be nFrames * wMaxWidth * wMaxHeight * sizeof(short)
@@ -83,8 +78,7 @@ extern funcGetGrpFrameInfo GetGrpFrameInfo;
 // When your program is done with the returned buffer, it should call DestroyGrp on the
 // buffer that was returned by this function to free up the memory from it.
 // The pointer returned by this function can also be directly used by DrawGrp or GetGrpInfo.
-typedef HANDLE (WINAPI* funcCreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, BOOL bNoCompress, DWORD *nGrpSize);
-extern funcCreateGrp CreateGrp;
+extern HANDLE (WINAPI* CreateGrp)(signed short *lpImageData, WORD nFrames, WORD wMaxWidth, WORD wMaxHeight, BOOL bNoCompress, DWORD *nGrpSize);
 
 typedef COLORREF (WINAPI* GETPIXELPROC)(
   HDC hDC, // same value as hdcDest from DrawGrp,
@@ -104,20 +98,15 @@ typedef void (WINAPI* SETPIXELPROC)(
 
 // Call these to have DrawGrp use custom functions for reading and drawing pixels
 // so that you can have it read from and write to a buffer, for example.
-typedef void (WINAPI* funcSetFunctionGetPixel)(GETPIXELPROC lpGetPixelProc);
-typedef void (WINAPI* funcSetFunctionSetPixel)(SETPIXELPROC lpSetPixelProc);
-extern funcSetFunctionGetPixel SetFunctionGetPixel; // Only used with ALPHA_BLEND
-extern funcSetFunctionSetPixel SetFunctionSetPixel;
+extern void (WINAPI* SetFunctionGetPixel)(GETPIXELPROC lpGetPixelProc); // Only used with ALPHA_BLEND
+extern void (WINAPI* SetFunctionSetPixel)(SETPIXELPROC lpSetPixelProc);
 
 // Call this to make a different Storm.dll-compatible MPQ library be used (like SFMPQ).
-typedef BOOL (WINAPI* funcSetMpqDll)(LPCSTR lpDllFileName);
-extern funcSetMpqDll SetMpqDll;
+extern BOOL (WINAPI* SetMpqDll)(LPCSTR lpDllFileName);
 
 // These no longer need to be called
-typedef BOOL   (WINAPI* funcLoadGrpApi)();
-typedef void   (WINAPI* funcFreeGrpApi)();
-extern funcLoadGrpApi LoadGrpApi;
-extern funcFreeGrpApi FreeGrpApi;
+extern BOOL   (WINAPI* LoadGrpApi)();
+extern void   (WINAPI* FreeGrpApi)();
 
 #ifdef __cplusplus
 };  // extern "C" 

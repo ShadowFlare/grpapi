@@ -1,5 +1,6 @@
 // drawgrp.cpp : Defines the entry point for the console application.
 //
+/* License information for this code is in license.txt */
 
 #define _CRT_RAND_S
 #include <stdlib.h>

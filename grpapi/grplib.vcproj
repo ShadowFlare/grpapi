@@ -4,9 +4,6 @@
 	Version="8.00"
 	Name="grplib"
 	ProjectGUID="{66127C6F-39DA-4B7A-9856-789ED0139DCB}"
-	SccProjectName="&quot;$/grpapi_VS2005.root/grpapi&quot;, IGAAAAAA"
-	SccLocalPath=".."
-	SccProvider="MSSCCI:Microsoft Visual SourceSafe"
 	>
 	<Platforms>
 		<Platform
