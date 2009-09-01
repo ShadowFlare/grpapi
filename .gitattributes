@@ -1,0 +1,3 @@
+*.bas -crlf
+*.sln -crlf
+*.vcproj -crlf
